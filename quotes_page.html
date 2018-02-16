@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Material Design Bootstrap</title>
+    <title>FabApp Quote</title>
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
@@ -14,192 +15,144 @@
     <link href="css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="css/style.css" rel="stylesheet">
+    <link href="css/bootstrap-social.css" rel="stylesheet">
+    <link href="css/progressbar.css" rel="stylesheet">
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
 </head>
 
 <body>
 
 
-<!--Main Navigation-->
-<header> 
-
+    <!--Main Navigation-->
+    <header>
         <!--Navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark unique-color">
-            <div class="container">
-
-                <!-- Navbar brand -->
-                <a class="navbar-brand" href="http://fablab.uta.edu/">
-                    <img src="./images/fabapp.png" alt="Fablab" style="height:50px">
-                </a>
-
-                <!-- Collapse button -->
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Collapsible content -->
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-                    <!-- Links -->
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="index.html">Home
-                                <span class="sr-only">(current)</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="https://facebook.com/">Facebook</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="https://twitter.com/">Twitter</a>
-                        </li>
-
-                        <!-- Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                            <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <!-- Staff Login -->
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <strong>STAFF LOGIN</strong>
-                            </a>
-                        </li>
-                </div>
-                <!-- Collapsible content -->
-            </div>
-
-        </nav>
+        <header>
+            <div id="nav-placeholder"></div>
+            <script>
+                $(function () {
+                    $("#nav-placeholder").load("./html_components/nav-bar.html");
+                });
+            </script>
+        </header>
         <!--/.Navbar-->
-  
-    
-</header>
-<!--Main Navigation-->
+    </header>
+    <!--Main Navigation-->
 
-    
-<!--Main layout-->
-<main class="mt-5">
 
-<div class="container">
+    <!--Main layout-->
+    <main class="mt-5">
 
-<!--Grid row-->
-<div class="row">
+        <div class="container">
 
-<div class="col-md-4 mb-4">
-<!--Card image-->
-    <div class="view overlay hm-white-slight">
-    </div>
+            <!--Grid row-->
+            <div class="row">
 
-    <!--Card content-->
-    <div class="card-body">
-        <!--Title-->
-        <h4 class="card-title">PolyPrinter</h4>
-        <div class="md-form">
-    	<input type="text" id="form1" class="form-control">
-    	<label for="form1" class="">Grams</label>
-		</div>
-        <!--Text-->
-        <p class="card-text">Please input the amount of grams of material that you would like to get quoted.</p>
-        <a href="#" class="btn btn-indigo">Get Quoted!</a>
-    </div>
+                <div class="col-md-6 col-lg-4 mb-4">
 
-</div>
-<div class="col-md-4 mb-4">
-<!--Card image-->
-    <div class="view overlay hm-white-slight">
-    </div>
+                    <!--Card content-->
+                    <div class="card-body grey lighten-4 text-center">
+                        <!--Title-->
+                        <h4 class="card-title text-center">PolyPrinter</h4>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <img class="img" src="./images/polyprinter.svg" style="height:70px" alt="Card image cap">
+                            </div>
 
-    <!--Card content-->
-    <div class="card-body">
-        <!--Title-->
-        <h4 class="card-title">Vinyl</h4>
-        <div class="md-form">
-    	<input type="text" id="form1" class="form-control">
-    	<label for="form1" class="">Inches</label>
-		</div>
-        <!--Text-->
-        <p class="card-text">Please input the amount of inches of material that you would like to get quoted.</p>
-        <a href="#" class="btn btn-indigo">Get Quoted!</a>
-    </div>
+                            <div class="col-sm-8 ml-2">
+                                <div class="md-form">
+                                    <input type="text" id="form1" class="form-control">
+                                    <label for="form1" class="">Grams</label>
+                                </div>
+                            </div>
+                        </div>
 
-</div>
-<div class="col-md-4 mb-4">
-<!--Card image-->
-    <div class="view overlay hm-white-slight">
-    </div>
-
-    <!--Card content-->
-    <div class="card-body">
-        <!--Title-->
-        <h4 class="card-title">uPrint</h4>
-        <div class="md-form">
-    	<input type="text" id="form1" class="form-control">
-    	<label for="form1" class="">Model Material Cubic Inches</label>
-    	<div class="md-form">
-    	<input type="text" id="form1" class="form-control">
-    	<label for="form1" class="">Support Material Cubic Inches</label>
-		</div>
-        <!--Text-->
-        <p class="card-text">Please input the amount of model and support materials in cubic inches that you would like to get quoted.</p>
-        <a href="#" class="btn btn-indigo">Get Quoted!</a>
-    </div>
-
-</div>
-
-</div>
-
-</div>
-   
-    
-</main>
-<!--Main layout-->
-
-    
-<!--Footer-->
-<footer>
-
-    <footer class="page-footer indigo center-on-small-only">
-
-            <!--Footer Links-->
-            <div class="container">
-                <div class="text-center mb-3">
-                    <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/UTAFabLab" target="_blank">
-                        <span class="fa fa-facebook"></span>
-                    </a>
-                    <a class="btn btn-social-icon btn-instagram" href="https://twitter.com/UTAFabLab" target="_blank">
-                        <span class="fa fa-instagram"></span>
-                    </a>
-                    <a class="btn btn-social-icon btn-twitter" href="https://instagram.com/utafablab" target="_blank">
-                        <span class="fa fa-twitter"></span>
-                    </a>
-                    <a class="btn btn-social-icon btn-twitter" href="https://github.com/UTA-FabLab/fabapp" target="_blank">
-                        <span class="fa fa-github"></span>
-                    </a>
-                </div>
-            </div>
-            <!--/.Footer Links-->
-
-            <!--Copyright-->
-            <div class="footer-copyright">
-                <div class="container-fluid">
-                    <a href="https://fablab.uta.edu"> FabLab.uta.edu </a>
+                        <!--Text-->
+                        <a href="#" class="btn btn-primary">Get Quote</a>
+                    </div>
 
                 </div>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <!--Card image-->
+                    <div class="view overlay hm-white-slight">
+                    </div>
+
+                    <!--Card content-->
+                    <div class="card-body grey lighten-4 text-center">
+                        <!--Title-->
+                        <h4 class="card-title">Vinyl</h4>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <img class="img" src="./images/vinyl.svg" style="height:70px" alt="Card image cap">
+                            </div>
+
+                            <div class="col-sm-8 ml-2">
+                                <div class="md-form">
+                                    <input type="text" id="form1" class="form-control">
+                                    <label for="form1" class="">Inches</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="#" class="btn btn-primary">Get Quote</a>
+                    </div>
+
+                </div>
+                <div class="col-md-12 col-lg-4 mb-4 text-center">
+
+                    <!--Card content-->
+                    <div class="card-body grey lighten-4 text-center">
+                        <!--Title-->
+                        <h4 class="card-title">uPrint</h4>
+                        <div class="row">
+
+                            <div class="col-sm-3">
+                                <img class="img" src="./images/uprint.svg" style="height:70px" alt="Card image cap">
+                            </div>
+
+                            <div class="col-sm-8 ml-2">
+                                <div class="md-form">
+                                    <input type="text" id="form1" class="form-control">
+                                    <label for="form1" class="">Model Inches<sup> 3</sup></label>
+                                </div>
+                                <div class="md-form">
+                                        <input type="text" id="form1" class="form-control">
+                                        <label for="form1" class="">Support Inches<sup> 3</sup></label>
+                                    </div>
+                            </div>
+                        </div>
+
+                        <a href="#" class="btn btn-primary">Get Quote</a>
+                    </div>
+
+                </div>
+
             </div>
-            <!--/.Copyright-->
-        </footer>
 
 
-</footer>
-<!--Footer--> 
-            
+    </main>
+    <!--Main layout-->
+
+
+    <!--Footer-->
+    <footer>
+        <div id="footer-placeholder"></div>
+        <script>
+            $(function () {
+                $("#footer-placeholder").load("./html_components/footer.html");
+            });
+        </script>
+    </footer>
+    <!--Footer-->
+
 
     <!-- SCRIPTS -->
     <!-- JQuery -->
