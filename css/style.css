@@ -1,3 +1,7 @@
 .font-large {
     font-size: 60px;
 }
+
+.d-flex {
+    display:flex;
+}
