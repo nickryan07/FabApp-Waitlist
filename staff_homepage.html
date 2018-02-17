@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>FabApp Quote</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/bootstrap-social.css" rel="stylesheet">
+    <link href="css/progressbar.css" rel="stylesheet">
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+</head>
+
+<body>
+
+
+    <!--Main Navigation-->
+    <header>
+        <!--Navbar-->
+        <header>
+            <div id="nav-placeholder"></div>
+            <script>
+                $(function () {
+                    $("#nav-placeholder").load("./html_components/nav-bar.html");
+                });
+            </script>
+        </header>
+        <!--/.Navbar-->
+    </header>
+    <!--Main Navigation-->
+
+
+    <!--Main layout-->
+    <main class="mt-5">
+        
+        <!--Main container-->
+        <div class="container">
+            
+            <!--Grid row-->
+            <div class="row">
+
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-70 grey lighten-4">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">START PRINT</h4>
+                            <h1 class="card-title font-large text-center">#7</h1>
+                        </div>
+
+                        <a href="#" class="btn btn-primary">Start</a>
+                    </div>
+                        <!--/.Card-->
+
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-70 grey lighten-4">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">MAKE TICKET</h4>
+                            <h4 class="card-text text-center">Next Issuable Ticket:</h4>
+                            <h1 class="card-title font-large text-center">#11</h1>
+                        </div>
+
+                        <div class="md-form ml-4 mt-2 mr-4">
+                            <input placeholder="MavID" type="text" id="form5">
+                        </div>
+                        <a href="#" class="btn btn-primary">Generate</a>
+                    </div>
+                        <!--/.Card-->
+
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+                    <!--Card content-->
+                    <div class="card h-70 grey lighten-4 text-center">
+                        <div class="card-body">
+                            <h4 class="card-title">CURRENT WAIT</h4>
+                            <div class="row">
+                                    <div class="container">
+                                            <div class="col">
+                                                <div class="progress blue-value">
+                                                    <span class="progress-left">
+                                                        <span class="progress-bar"></span>
+                                                    </span>
+                                                    <span class="progress-right">
+                                                        <span class="progress-bar"></span>
+                                                    </span>
+                                                    <div>
+                                                        <h3 class="progress-value">45</h3>
+                                                        <h2 class="progress-title">Minute Wait</h2>
+                                                    </div>
+                                                </div>
+                                          </div>
+                                    </div>            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+
+            <!--Grid row-->
+            <div class="row">
+
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+
+                    <!--Card content-->
+                    <div class="card h-100 grey lighten-4 text-center">
+                        <!--Title-->
+                        <div class="card-body card-block">
+                        <h4 class="card-title text-center">EQUIPMENT STATUS</h4>
+                            
+                        </div>
+
+                        <!--Text-->
+                        <a href="#" class="btn btn-primary" style="margin-top: 41px;">Manage</a>
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+                    <!--Card image-->
+                    <div class="view overlay hm-white-slight">
+                    </div>
+
+                    <!--Card content-->
+                    <div class="card h-100 grey lighten-4 text-center">
+                    <div class="card-body card-block">
+                    <!--Title-->
+                    <h4 class="card-title text-center">QUOTES</h4>
+                    <img class="img-fluid" src="./images/price-tag.svg" alt="Card image cap">
+                    </div>
+
+                    <a href="#" class="btn btn-primary" style="margin-top: 41px;">Manage</a>
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+
+                    <!--Card content-->
+                    <div class="card h-100 grey lighten-4 text-center">
+                        <!--Title-->
+                        <div class="card-body card-block">
+                        <h4 class="card-title text-center">MATERIALS</h4>
+                        <img class="img-fluid" src="./images/items.svg" alt="Card image cap">
+                        </div>
+
+                        <!--Text-->
+                        <a href="#" class="btn btn-primary" style="margin-top: 41px;">Manage</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+    <!--Main layout-->
+
+
+    <!--Footer-->
+    <footer>
+        <div id="footer-placeholder"></div>
+        <script>
+            $(function () {
+                $("#footer-placeholder").load("./html_components/footer.html");
+            });
+        </script>
+    </footer>
+    <!--Footer-->
+
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+</body>
+
+</html>
