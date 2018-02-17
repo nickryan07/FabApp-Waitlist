@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Student Homepage</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/bootstrap-social.css" rel="stylesheet">
+    <link href="css/progressbar.css" rel="stylesheet">
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+</head>
+
+<body>
+
+
+    <!--Main Navigation-->
+    <header>
+        <!--Navbar-->
+        <header>
+            <div id="nav-placeholder"></div>
+            <script>
+                $(function () {
+                    $("#nav-placeholder").load("./html_components/nav-bar.html");
+                });
+            </script>
+        </header>
+        <!--/.Navbar-->
+    </header>
+    <!--Main Navigation-->
+
+
+    <!--Main layout-->
+    <main class="mt-5">
+        
+        <!--Main container-->
+        <div class="container content-row">
+            
+            <!-- Grid row -->
+            <div class="row d-flex">
+
+                <!--Grid column-->
+                <div class="col-md-6 col-sm-6 mb-4">
+
+                    <!-- 3D Printers Status -->
+                    <div class="card h-100 text-center grey lighten-4">
+                        <div class="card-body card-block">
+                            <h4 class="card-title">Current Wait</h4>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12 mb-4">
+                                    <h4 class="card-text">Your Number</h4>
+                                    <h1 class="card-title font-large">#7</h1>
+                                    <h4 class="card-text"></h4>
+                                    <a href="#" class="btn btn-red" style="">Cancel</a>
+                                </div>
+                                <div class="col-lg-6 col-md-12 mb-4">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="progress blue-value">
+                                                    <span class="progress-left">
+                                                        <span class="progress-bar"></span>
+                                                    </span>
+                                                    <span class="progress-right">
+                                                        <span class="progress-bar"></span>
+                                                    </span>
+                                                    <div>
+                                                        <h3 class="progress-value">60</h3>
+                                                        <h2 class="progress-title">Minute Wait</h2>
+                                                    </div>
+                                                </div>
+                                                <h2 class="card-text">Polyprinter</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Grid column-->
+                <div class="col-md-6 col-sm-5 mb-4">
+
+                    <!-- 3D Printers Status -->
+                    <div class="card h-100 text-center">
+                        <div class="card-body card-block grey lighten-4">
+                            <h4 class="card-title">Get Alerts</h4>
+                            <div class="row">
+                                <!--<form class="form-inline">
+                                    <div class="col-lg-3 col-md-3">
+                                        <h5 class="card-text">[img] Email:</h5>
+                                    </div>
+                                    <div class="col-lg- col-md-9 mb-4">
+                                        <div class="md-form ml-4 mt-2 mr-4">
+                                            <input placeholder="Email" type="text" id="form5">
+                                        </div>
+                                    </div>
+                                </form>-->
+                                
+                                <form class="form-inline">
+
+                                    <div class="md-form form-group">
+                                        <i class="fa fa-envelope prefix"></i>
+                                        <input type="email" id="form91" class="form-control validate">
+                                        <label for="form91" data-error="" data-success="">Email Address</label>
+                                    </div>
+                                    <div class="md-form form-group">
+                                        <i class="fa fa-mobile prefix"></i>
+                                        <input type="text" id="form92" class="form-control">
+                                        <label for="form92">Phone #</label>
+                                    </div>
+
+                                    <div class="md-form form-group">
+                                        <a class="btn btn-primary btn-lg">Update</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+
+            <!--Grid row-->
+            <div class="row d-flex">
+
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+
+                    <!--Card content-->
+                    <div class="card h-100 grey lighten-4 text-center">
+                        <!--Title-->
+                        <div class="card-body card-block">
+                            <h4 class="card-title text-center">Active Job</h4>
+                                <div class="col-lg-12 col-md-12 mb-4">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="progress blue-value">
+                                                <span class="progress-left">
+                                                    <span class="progress-bar"></span>
+                                                </span>
+                                                <span class="progress-right">
+                                                    <span class="progress-bar"></span>
+                                                </span>
+                                                <div>
+                                                    <h3 class="progress-value">96</h3>
+                                                    <h2 class="progress-title">Minutes</h2>
+                                                </div>
+                                            </div>
+                                            <h2 class="card-text">Polyprinter #4</h2>
+                                            <h2 class="card-text">Started 2-5 12:00 PM</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+
+                    <!--Card content-->
+                    <div class="card h-100 grey lighten-4 text-center">
+                        <!--Title-->
+                        <div class="card-body card-block">
+                            <h4 class="card-title text-center">Active Job</h4>
+                                <div class="col-lg-12 col-md-12 mb-4">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="progress blue-value">
+                                                <span class="progress-left">
+                                                    <span class="progress-bar"></span>
+                                                </span>
+                                                <span class="progress-right">
+                                                    <span class="progress-bar"></span>
+                                                </span>
+                                                <div>
+                                                    <h3 class="progress-value">46</h3>
+                                                    <h2 class="progress-title">Minutes</h2>
+                                                </div>
+                                            </div>
+                                            <h2 class="card-text">Polyprinter #4</h2>
+                                            <h2 class="card-text">Started 2-5 12:00 PM</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-4">
+
+                    <!--Card content-->
+                    <div class="card h-100 grey lighten-4 text-center">
+                        <!--Title-->
+                        <div class="card-body card-block">
+                            <h4 class="card-title text-center">New Job</h4>
+                        </div>
+
+                        <!--Text-->
+                        <div class="md-form form-group">
+                            <a class="btn btn-primary btn-lg">
+                                <i class="fa fa-user-plus"></i> Add
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+    <!--Main layout-->
+
+
+    <!--Footer-->
+    <footer>
+        <div id="footer-placeholder"></div>
+        <script>
+            $(function () {
+                $("#footer-placeholder").load("./html_components/footer.html");
+            });
+        </script>
+    </footer>
+    <!--Footer-->
+
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+</body>
+
+</html>
