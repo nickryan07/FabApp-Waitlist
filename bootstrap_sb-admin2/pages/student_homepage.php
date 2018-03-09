@@ -184,7 +184,7 @@ $_SESSION['type'] = "home";
                             <div class="panel-heading">
                                 Receive Alerts
                             </div>
-                            <div class="panel-body">
+                            <div class="panel-body" style="margin-top: 35px">
                                 <div class="form-group">
                                     <label><i class="fa fa-phone"></i> Phone Number</label>
                                     <input class="form-control" placeholder="Enter text">
@@ -193,7 +193,7 @@ $_SESSION['type'] = "home";
                                     <label><i class="fa fa-envelope"></i> Email Address</label>
                                     <input class="form-control" placeholder="Enter text">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" style="margin-top: 50px">
                                     <label><i class="fa fa-info-circle"></i> Disclaimer</label>
                                     <div class="checkbox">
                                         <label>
