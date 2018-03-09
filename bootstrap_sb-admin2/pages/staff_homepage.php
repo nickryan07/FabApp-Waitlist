@@ -107,16 +107,16 @@ $_SESSION['type'] = "home";
                         <div class="col-lg-12">
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <img class="img-fluid m-2" src="../images/polyprinter.svg" alt="Card image cap" style="max-height:100px;">
+                                    <img class="img-fluid m-2" src="/FabApp/images/polyprinter.svg" alt="Card image cap" style="max-height:100px;">
                                 </div>
                                 <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/laser.svg" alt="Card image cap" style="max-height:100px;">
+                                    <img class="img-fluid" src="/FabApp/images/laser.svg" alt="Card image cap" style="max-height:100px;">
                                 </div>
                                 <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/sewing-machine.svg" alt="Card image cap" style="max-height:100px;">
+                                    <img class="img-fluid" src="/FabApp/images/sewing-machine.svg" alt="Card image cap" style="max-height:100px;">
                                 </div>
                                 <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/uPrint.svg" alt="Card image cap" style="max-height:100px;">
+                                    <img class="img-fluid" src="/FabApp/images/uPrint.svg" alt="Card image cap" style="max-height:100px;">
                                 </div>
                             </div>
                         </div>
@@ -139,7 +139,7 @@ $_SESSION['type'] = "home";
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="row text-center">
-                                <img class="img-fluid m-2" src="../images/items.svg" alt="Card image cap" style="max-height:200px;">
+                                <img class="img-fluid m-2" src="/FabApp/images/items.svg" alt="Card image cap" style="max-height:200px;">
                             </div>
                             <a href="#" class="btn btn-default btn-block">Manage</a>
                         </div>
@@ -153,7 +153,7 @@ $_SESSION['type'] = "home";
                 <div class="col-lg-13">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-ticket fa-fw"></i>Manage Quotes
+                            <i class="fa fa-ticket fa-fw"></i>View and Manage Quotes
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -165,33 +165,95 @@ $_SESSION['type'] = "home";
                                 </li>
                                 <li><a href="#uprint" data-toggle="tab">uPrint</a>
                                 </li>
+                                <li><a href="#manage" data-toggle="tab">Manage</a>
+                                </li>
                             </ul>
 
                             <!-- Tab panes -->
                             <div class="tab-content">
                                 <div class="tab-pane fade in active" id="polyprinter">
                                     <h4>PolyPrinter Quote Tab</h4>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <input id="polyprinter-input" class="form-control" onkeyup="polyPrinter()" onchange="polyPrinter()" type="number" min="0" max="1000" step=".5" autocomplete="off" placeholder="Enter PolyPrinter Material">
+                                                <label for="form1" class="">Grams</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <h2 id="polyprinter-output" class="font-medium text-center">
+                                                $0.00
+                                            </h2>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="tab-pane fade" id="vinyl">
                                     <h4>Vinyl Quote Tab</h4>
                                     <div class="row">
-                                        <div class="col-lg-12">
+                                        <div class="col-lg-6">
                                             <div class="form-group">
-                                                <label>Vinyl Price</label>
-                                                <input class="form-control" placeholder="Enter New Vinyl Price per Inch">
+                                                <input id="vinyl-input" class="form-control" onkeyup="vinyl()" onchange="vinyl()" type="number" min="0" max="1000" step=".5" autocomplete="off" placeholder="Enter Vinyl Material">
+                                                <label for="form1" class="">Inches</label>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                        <div class="col-lg-12">
-                                        <a href="#" class="btn btn-default btn-block">Generate</a>
-                                        </div>
+                                        <div class="col-lg-6">
+                                            <h2 id="vinyl-output" class="font-medium text-center">
+                                                $0.00
+                                            </h2>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="uprint">
                                     <h4>uPrint Quote Tab</h4>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <input id="uPrint-material-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000" step=".5" autocomplete="off" placeholder="Enter Model Material">
+                                                <label for="form1" class="">Model in<sup> 3</sup></label>
+                                            </div>
+                                        <div class="col-lg-13">
+                                            <div class="form-group">
+                                                <input id="uPrint-support-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000" step=".5" autocomplete="off" placeholder="Enter Support Material">
+                                                <label for="form1" class="">Support in<sup> 3</sup></label>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <h2 id="uPrint-output" class="font-medium text-center">
+                                                $0.00
+                                            </h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade in active" id="manage">
+                                    <h4>Manage Quotes Tab</h4>
+                                    <div class="row">
+                                        <div class="col-lg-10">
+                                            <div class="form-group">
+                                                <label>PolyPrinter (Grams)</label>
+                                                <input class="form-control" placeholder="New PolyPrinter Material Price">
+                                                <a href="#" class="btn btn-primary btn-block">Update</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-10">
+                                            <div class="form-group">
+                                                <label>Vinyl (In)</label>
+                                                <input class="form-control" placeholder="New Vinyl Material Price">
+                                                <a href="#" class="btn btn-primary btn-block">Update</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-10">
+                                            <div class="form-group">
+                                                <label>uPrint (In<sup> 3</sup>)</label>
+                                                <input class="form-control" placeholder="New uPrint Material Price">
+                                                <a href="#" class="btn btn-primary btn-block">Update</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -304,6 +366,34 @@ $_SESSION['type'] = "home";
 
     <!-- /#wrapper --> 
 
+ <script type="text/javascript">
+    function polyPrinter()
+    {
+        var rate = 0.05;
+        var volume = document.getElementById("polyprinter-input").value;
+        var total = (volume * rate).toFixed(2);
+        document.getElementById("polyprinter-output").innerHTML = "$ " + total;
+    }
+    
+    function vinyl()
+    {
+        var rate = 0.05;
+        var length = document.getElementById("vinyl-input").value;
+        var total = (rate * length).toFixed(2);
+        document.getElementById("vinyl-output").innerHTML = "$" + total;
+    }
+    function uPrint()
+    {
+        var conv_rate = 16.387
+        var rate1 = 0.5;
+        var rate2 = 0.5;
+        var volume1 = document.getElementById("uPrint-material-input").value;
+        var volume2 = document.getElementById("uPrint-support-input").value;
+        var total = ((volume1 * conv_rate * rate1) + (volume2 * conv_rate * rate2)).toFixed(2);
+        document.getElementById("uPrint-output").innerHTML = "$" + total;
+    }
+</script>    
+    
 </body>
 <!-- jQuery -->
     <script src="../vendor/jquery/jquery.min.js"></script>
