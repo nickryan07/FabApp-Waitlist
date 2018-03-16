@@ -4,37 +4,53 @@
  *   FabApp V 0.9
  */
 include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/header.php');
-$device_array = array();
-$_SESSION['type'] = "home";
+$job_array = array();
+$errorMsg = "";
+
+if (isset($_GET["trans_id"])){
+    if (Transactions::regexTrans($_GET['trans_id'])){
+        $trans_id = $_GET['trans_id'];
+        $ticket = new Transactions($trans_id);
+    } else {
+        $errorMsg = "Invalid Ticket Number";
+    }
+} elseif (isset($_GET["operator"])){
+    
+    if (Users::regexUSER ($_GET['operator'])){
+        $operator = $_GET['operator'];
+        if($result = $mysqli->query("
+            SELECT trans_id
+            FROM transactions
+            WHERE transactions.operator = '$operator'
+            ORDER BY t_start DESC
+            Limit 1
+        ")){
+            if( $result->num_rows > 0){
+                $row = $result->fetch_assoc();
+                $ticket = new Transactions($row['trans_id']);
+            } else {
+                $errorMsg = "No Transactions Found for ID# $operator";
+            }
+        } else {
+            $message = "Error - ID LookUp";
+        }
+    } else {
+        $errorMsg = "Invalid Operator ID";
+    }
+} else {
+    $errorMsg = "Search Parameter is Missing";
+}
+
+if ($errorMsg != ""){
+    $_SESSION['loc'] = "/index.php";
+    echo "<script> alert('$errorMsg'); window.location.href='/index.php';</script>";
+}
 
 ?>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
-    <!-- Bootstrap Core CSS -->
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-</head>
-
-<body>
 
     <div id="wrapper">
 
-        
+
 
         <!-- Page Content -->
         <div id="page-wrapper">
@@ -46,25 +62,56 @@ $_SESSION['type'] = "home";
                     <!-- /.col-lg-12 -->
                 </div>
                 <div class="row">
+                    <?php if ($result = $mysqli->query("
+                            SELECT trans_id, device_desc, t_start, est_time, devices.dg_id, dg_parent, devices.d_id, url, operator, status_id, op_phone, op_email
+                            FROM devices
+                            JOIN device_group
+                            ON devices.dg_id = device_group.dg_id
+                            JOIN (SELECT trans_id, t_start, t_end, est_time, d_id, operator, status_id, op_phone, op_email FROM transactions WHERE transactions.operator = '$operator' AND transactions.status_id < 11 ORDER BY trans_id DESC) as t 
+                            ON devices.d_id = t.d_id
+                            WHERE public_view = 'Y'
+                            ORDER BY dg_id, `device_desc`
+                        ")){
+                            while ( $panel = $result->fetch_assoc() ){ ?>
+                    <?php if($panel["t_start"]) {
+                                        $ticket = new Transactions($panel['trans_id']); ?>
                     <div class="col-lg-4">
-                        <div class="panel panel-primary">
+                        <div class="panel panel-warning">
                             <div class="panel-heading">
-                                Current Wait - 3D Printer
+                                <i class="fa fa-cog fa-spin fa-fw"></i>
+                                <span class="sr-only">Loading...</span> Active Ticket -
+                                <?php echo $ticket->getDevice()->getDevice_desc(); ?>
                             </div>
                             <div class="panel-body">
                                 <div class="col-lg-4">
-                                    <h6>
-                                        Number
-                                    </h6>
-                                    <h2>
-                                        #7
-                                    </h2>
+                                    <div id="job-info" style="margin-left: 25px;">
+                                        <h6>
+                                            Number
+                                        </h6>
+                                        <h2>
+                                            #
+                                            <?php echo ("$panel[trans_id]"); ?>
+                                        </h2>
+                                    </div>
                                 </div>
                                 <div class="col-lg-8">
                                     <div style="margin-top: 15px">
                                         <p>
                                             <strong>Est. Wait:</strong>
-                                            <span class="pull-right text-muted">60 Minutes</span>
+                                            <span class="pull-right text-muted">
+                                                        <?php //echo("<div>".date( 'M d g:i a',strtotime($panel["t_start"]) )."</div>" );
+                                                            if( $panel["status_id"] == 11) {
+                                                                echo($ticket->getStatus()->getMsg());
+                                                            } elseif (isset($panel["est_time"])) {
+                                                                echo("<div id=\"est".$panel["trans_id"]."\">".$panel["est_time"]." </div>" );
+                                                                $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $panel["est_time"]);
+                                                                sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                                $time_seconds = $hours * 3600 + $minutes * 60 + $seconds- (time() - strtotime($panel["t_start"]) ) + $sv["grace_period"];
+                                                                array_push($job_array, array($panel["trans_id"], $time_seconds, $panel["dg_parent"]));
+                                                            } else 
+                                                                echo("<div align=\"center\">-</div>"); 
+                                                                      ?>
+                                                        </span>
                                         </p>
                                         <div class="progress progress-striped active">
                                             <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" style="width: 55%">
@@ -72,167 +119,84 @@ $_SESSION['type'] = "home";
                                             </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
-                                
-                                <div class="col-lg-12" style="text-align: center">
-                                    <button type="submit" class="btn btn-danger">Cancel</button>
-                                </div>
+                                <!--div class="col-lg-12" style="text-align: center">
+                                                <button type="submit" class="btn btn-danger">Cancel</button>
+                                            </div-->
                             </div>
                             <div class="panel-footer">
-                                
-                            </div>
-                        </div>
-                        <div class="col-lg-13">
-                        <div class="panel panel-warning">
-                            <div class="panel-heading">
-                                Active Job - 3D Printer
-                            </div>
-                            <div class="panel-body">
-                                <div class="col-lg-12">
-                                    <div style="margin-top: 15px">
-                                        <p>
-                                            <strong>Polyprinter #4</strong>
-                                            <span class="pull-right text-muted">40 Minute Wait</span>
-                                        </p>
-                                        <div class="progress progress-striped active">
-                                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
-                                                <span class="sr-only">75% Complete</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h6>
-                                        Started at ....
-                                    </h6>
-                                </div>
-                            </div>
-                            <div class="panel-footer">
-                                
+
                             </div>
                         </div>
                     </div>
-                    </div>
-                    
-                    
-                    <!-- /.col-lg-4 -->
+                    <?php }
+                                                                     }
+                        } ?>
                     <div class="col-lg-4">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                Current Wait - Laser
-                            </div>
-                            <div class="panel-body">
-                                  <div class="col-lg-4">
-                                    <h6>
-                                        Number
-                                    </h6>
-                                    <h2>
-                                        #8
-                                    </h2>
-                                </div>
-                                <div class="col-lg-8">
-                                    <div style="margin-top: 15px">
-                                        <p>
-                                            <strong>Est. Wait:</strong>
-                                            <span class="pull-right text-muted">40 Minutes</span>
-                                        </p>
-                                        <div class="progress progress-striped active">
-                                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
-                                                <span class="sr-only">75% Complete</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12" style="text-align: center">
-                                    <button type="submit" class="btn btn-danger">Cancel</button>
-                                </div>
-                            </div>
-                            <div class="panel-footer">
-                                
-                            </div>
-                        </div>
-                        <div class="col-lg-13">
-                        <div class="panel panel-warning">
-                            <div class="panel-heading">
-                                Active Job - Laser
-                            </div>
-                            <div class="panel-body">
-                                <div class="col-lg-12">
-                                    <div style="margin-top: 15px">
-                                        <p>
-                                            <strong>Laser #1</strong>
-                                            <span class="pull-right text-muted">40 Minute Wait</span>
-                                        </p>
-                                        <div class="progress progress-striped active">
-                                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
-                                                <span class="sr-only">75% Complete</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h6>
-                                        Started at ....
-                                    </h6>
-                                </div>
-                            </div>
-                            <div class="panel-footer">
-                                
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                    <!-- /.col-lg-4 -->
-                    <div class="col-lg-4">
-                        <div class="panel panel-primary">
+                        <div class="panel panel-default">
                             <div class="panel-heading">
                                 Receive Alerts
                             </div>
                             <div class="panel-body" style="margin-top: 35px">
+                                <form method="post">
                                 <div class="form-group">
                                     <label><i class="fa fa-phone"></i> Phone Number</label>
-                                    <input class="form-control" placeholder="Enter text">
+                                    <input class="form-control" name="phone" placeholder="">
                                 </div>
                                 <div class="form-group">
                                     <label><i class="fa fa-envelope"></i> Email Address</label>
-                                    <input class="form-control" placeholder="Enter text">
+                                    <input class="form-control" name="email" placeholder="">
                                 </div>
                                 <div class="form-group" style="margin-top: 50px">
                                     <label><i class="fa fa-info-circle"></i> Disclaimer</label>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" value="">I have read and understand the <a>FERPA release policies</a>.
+                                            <input type="checkbox" name="disclaimer" value="">I have read and understand the <a>FERPA release policies</a>.
                                         </label>
                                     </div>
                                 </div>
                                 <div style="text-align: center">
-                                    <button type="submit" class="btn btn-default">Update</button>
+                                    <button type="submit" name="update-info" class="btn btn-default">Update</button>
                                 </div>
+                                    <?php
+                                    if(isset($_POST['disclaimer'])) {
+                                        if(isset($_POST['update-info']))
+                                        {
+                                            $phone = $_POST["phone"];
+                                            $email = $_POST["email"];
+                                            Transactions::insertContactInfo($operator, $phone, $email);
+                                        }
+                                    } else {
+                                        echo ("You must accept the disclaimer.");
+                                    }
+                                    ?>
+                                </form>
                             </div>
                             <div class="panel-footer">
                                 
                             </div>
                         </div>
-                    </div>
-                    <!-- /.col-lg-4 -->
+</div>
                 </div>
                 <!-- /.row -->
             </div>
             <!-- /.container-fluid -->
+            <?php
+        //Standard call for dependencies
+        include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/footer.php');
+        ?>
         </div>
         <!-- /#page-wrapper -->
 
     </div>
     <!-- /#wrapper -->
-
-    <!-- jQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="../dist/js/sb-admin-2.js"></script>
-
-</body>
-
-</html>
+<script>
+<?php foreach ($job_array as $da) { ?>
+	var time = <?php echo $da[1];?>;
+	var display = document.getElementById('est<?php echo $da[0];?>');
+	var dg_parent = <?php if ($da[2]) echo $da[2]; else echo "0";?>;
+	startTimer(time, display, dg_parent);
+	
+<?php } ?>
+</script>
