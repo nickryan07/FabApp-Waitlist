@@ -7,15 +7,7 @@ include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/header.php');
 $job_array = array();
 $errorMsg = "";
 
-if (isset($_GET["trans_id"])){
-    if (Transactions::regexTrans($_GET['trans_id'])){
-        $trans_id = $_GET['trans_id'];
-        $ticket = new Transactions($trans_id);
-    } else {
-        $errorMsg = "Invalid Ticket Number";
-    }
-} elseif (isset($_GET["operator"])){
-    
+if (isset($_GET["operator"])){
     if (Users::regexUSER ($_GET['operator'])){
         $operator = $_GET['operator'];
         if($result = $mysqli->query("
@@ -191,14 +183,15 @@ if ($errorMsg != ""){
                 <!-- /.row -->
             </div>
             <!-- /.container-fluid -->
-            <?php
-        //Standard call for dependencies
-        include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/footer.php');
-        ?>
+            
         </div>
         <!-- /#page-wrapper -->
 
     </div>
+<?php
+        //Standard call for dependencies
+        include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/footer.php');
+        ?>
     <!-- /#wrapper -->
 <script>
 <?php foreach ($job_array as $da) { ?>
