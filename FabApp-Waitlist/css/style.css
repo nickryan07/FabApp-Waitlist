@@ -1,0 +1,18 @@
+.font-large {
+    font-size: 60px;
+}
+
+.d-flex {
+    display:flex;
+}
+
+.card-img {
+    width: 50%;
+    height: auto;
+    text-align: center;
+}
+
+.button a:hover {
+    color: white;
+    background-color: white;
+}

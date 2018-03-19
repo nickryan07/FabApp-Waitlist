@@ -1,0 +1,12 @@
+/* Your custom styles */
+.card {
+	text-align: center;
+}
+
+textarea.md-textarea {
+	border-bottom: 1px solid #bdbdbd;
+}
+
+#forgot-pass a:hover a:link a:active a:visited {
+	color: blue;
+}

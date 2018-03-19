@@ -1,0 +1,75 @@
+<nav class="navbar navbar-expand-lg navbar-dark unique-color">
+    <div class="container">
+
+        <!-- Navbar brand -->
+        <a class="navbar-brand" href="http://fablab.uta.edu/">
+                    <img src="./images/FLlogo.png" alt="Fablab" style="height:50px">
+                </a>
+
+        <!-- Collapse button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+        <!-- Collapsible content -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <!-- Links -->
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="./index.html">Home</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="#">Btn2</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Btn3</a>
+                </li> -->
+
+                <!-- Dropdown -->
+                <!-- <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown1</a>
+                    <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">Action1</a>
+                        <a class="dropdown-item" href="#">Action2</a>
+                        <a class="dropdown-item" href="#">Action3</a>
+                    </div>
+                </li> -->
+            </ul>
+
+            <!-- Staff Login -->
+            <ul class="navbar-nav">
+                <!-- Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Staff Login</a>
+                    <div class="dropdown-menu dropdown-primary" aria-labelledby="">
+                        <!--<a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a> -->
+                        <form role="form" method="POST" action="" autocomplete="off" style="padding: 0px 100px 0px 20px;">
+                            <p class="h5 text-center mb-4" style="padding: 0px 0px 0px 75px;">Login</p>
+                            <div class="row">
+                                <div class="col-sm-12 md-form">
+                                        <i class="fa fa-lock prefix grey-text"></i>
+                                        <input type="password" id="pass" class="form-control" style="color: black; padding: 20px 70px 0px 0px;">
+                                        <label for="pass" class="control-label" style="padding: 0px 0px 0px 15px;">Password</label>
+                                </div>
+                                <div class="col-sm-12 login-button text-center">
+                                    <a href="staff_homepage.html" type="submit" class="btn btn-primary" name="signBtn"  style="text-align: right;">
+                                        <div style="color: white">Login<i class="fa fa-paper-plane-o"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div id="forgot-pass">
+                                    <!--                                <a href="http://<?php// echo $sv["forgotten"];?>" >Forgot your password?</a>-->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- Collapsible content -->
+    </div>
+
+</nav>
