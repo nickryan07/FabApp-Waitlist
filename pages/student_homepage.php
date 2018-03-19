@@ -100,11 +100,11 @@ if ($errorMsg != ""){
                         </div>
                     </div>
                     <?php if ($result = $mysqli->query("
-                            SELECT trans_id, device_desc, t_start, est_time, devices.dg_id, dg_parent, devices.d_id, url, operator, status_id, op_phone, op_email
+                            SELECT trans_id, device_desc, t_start, est_time, devices.dg_id, dg_parent, devices.d_id, url, operator, status_id
                             FROM devices
                             JOIN device_group
                             ON devices.dg_id = device_group.dg_id
-                            JOIN (SELECT trans_id, t_start, t_end, est_time, d_id, operator, status_id, op_phone, op_email FROM transactions WHERE transactions.operator = '$operator' AND transactions.status_id < 11 ORDER BY trans_id DESC) as t 
+                            JOIN (SELECT trans_id, t_start, t_end, est_time, d_id, operator, status_id FROM transactions WHERE transactions.operator = '$operator' AND transactions.status_id < 11 ORDER BY trans_id DESC) as t 
                             ON devices.d_id = t.d_id
                             WHERE public_view = 'Y'
                             ORDER BY dg_id, `device_desc`
