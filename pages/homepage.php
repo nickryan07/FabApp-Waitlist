@@ -450,13 +450,13 @@ $_SESSION['type'] = "home";
                                                             <?php 
                                                             
                                                             // Est Time Percentage = (now - start) / ((now - start) + est) * 100
-                                                            $dt = date("H:i:s", mktime(0, 0, 0));
-                                                            //$dt->setTime(0, 0); // set a time of zero
+                                                            
+                                                            sscanf($row["est_time"], "%d:%d:%d", $hours, $minutes, $seconds);
+                                                            $time_seconds = isset($seconds) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
 
-                                                            //if the estimated time is greater than zero then estimate a percentage
-                                                            if ($row["est_time"] > $dt) {
-                                                                sscanf($row["est_time"], "%d:%d:%d", $hours, $minutes, $seconds);
-                                                                $time_seconds = isset($seconds) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
+                                                            // if the estimated time is greater than the current time then display a progress bar, else show 100%
+                                                            if ($time_seconds > 0)
+                                                            {
                                                                 $percentage = (strtotime("now") - strtotime($row["t_start"])) / ((strtotime("now") - strtotime($row["t_start"])) + $time_seconds) * 100;
                                                             } else {
                                                                 $percentage = 100;
@@ -672,13 +672,25 @@ $_SESSION['type'] = "home";
 	
 <?php
         }  ?>
-        for ($i = 0; $i < $number_of_status_tables; $i++)
-        {
-            $tableName = '#indexTable_'.$i;
-            $($tableName).DataTable({
+             $("#indexTable_0").DataTable({
             "iDisplayLength": 25,
             "order": []
-        });
-        }
+            });
+            $("#indexTable_1").DataTable({
+            "iDisplayLength": 25,
+            "order": []
+            });
+            $("#indexTable_2").DataTable({
+            "iDisplayLength": 25,
+            "order": []
+            });
+            $("#indexTable_3").DataTable({
+            "iDisplayLength": 25,
+            "order": []
+            });
+            $("#indexTable_4").DataTable({
+            "iDisplayLength": 25,
+            "order": []
+            });
         
 </script>
