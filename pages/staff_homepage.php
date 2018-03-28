@@ -134,25 +134,6 @@ $_SESSION['type'] = "home";
                 <div class="col-lg-13">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-print fa-fw"></i>Materials
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="row text-center">
-                                <img class="img-fluid m-2" src="../images/items.svg" alt="Card image cap" style="max-height:200px;">
-                            </div>
-                            <a href="#" class="btn btn-default btn-block">Manage</a>
-                        </div>
-                        <!-- /.panel-body -->
-                        <div class="panel-footer">
-                        </div>
-                    </div>
-                    <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-13 -->
-                <div class="col-lg-13">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
                             <i class="fa fa-ticket fa-fw"></i>View and Manage Quotes
                         </div>
                         <!-- /.panel-heading -->
@@ -225,14 +206,16 @@ $_SESSION['type'] = "home";
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade in active" id="manage">
+                                <div class="tab-pane fade" id="manage">
                                     <h4>Manage Quotes Tab</h4>
                                     <div class="row">
                                         <div class="col-lg-10">
                                             <div class="form-group">
                                                 <label>PolyPrinter (Grams)</label>
-                                                <input class="form-control" placeholder="New PolyPrinter Material Price">
-                                                <a href="#" class="btn btn-primary btn-block">Update</a>
+                                                <input class="form-control" type="number" min="0" max="1000" step=".05" id="inputField1" placeholder="New PolyPrinter Material Price">
+                                                <button onclick="polyPrinter()" type="button" class="btn btn-primary btn-block" id="pushMe">Update</button>
+                                                <!--<input class="form-control" placeholder="New PolyPrinter Material Price">
+                                                <a href="#" class="btn btn-primary btn-block">Update</a>-->
                                             </div>
                                         </div>
                                     </div>
@@ -240,8 +223,10 @@ $_SESSION['type'] = "home";
                                         <div class="col-lg-10">
                                             <div class="form-group">
                                                 <label>Vinyl (In)</label>
-                                                <input class="form-control" placeholder="New Vinyl Material Price">
-                                                <a href="#" class="btn btn-primary btn-block">Update</a>
+                                                <input class="form-control" type="number" min="0" max="1000" step=".05" id="inputField2" placeholder="New Vinyl Material Price">
+                                                <button onclick="vinyl()" type="button" class="btn btn-primary btn-block" id="pushMe">Update</button>
+                                                <!--<input class="form-control" placeholder="New Vinyl Material Price">
+                                                <a href="#" class="btn btn-primary btn-block">Update</a>-->
                                             </div>
                                         </div>
                                     </div>
@@ -249,8 +234,10 @@ $_SESSION['type'] = "home";
                                         <div class="col-lg-10">
                                             <div class="form-group">
                                                 <label>uPrint (In<sup> 3</sup>)</label>
-                                                <input class="form-control" placeholder="New uPrint Material Price">
-                                                <a href="#" class="btn btn-primary btn-block">Update</a>
+                                                <input class="form-control" type="number" min="0" max="1000" step=".5" id="inputField3" placeholder="New uPrint Material Price">
+                                                <button onclick="uPrint()" type="button" class="btn btn-primary btn-block" id="pushMe">Update</button>
+                                                <!--<input class="form-control" placeholder="New uPrint Material Price">
+                                                <a href="#" class="btn btn-primary btn-block">Update</a>-->
                                             </div>
                                         </div>
                                     </div>
@@ -359,6 +346,66 @@ $_SESSION['type'] = "home";
                 <!-- /.col-lg-6 -->
                 </div>
                 <!-- /.row -->
+
+                    <div class="col-lg-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <label>
+                                    <i class="fa fa-suitcase"></i> Inventory </label>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>Material</th>
+                                            <th><i class="fas fa-paint-brush fa-fw"></i></th>
+                                            <?php if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
+                                        ?>
+                                                    <th>Qty on Hand</th>
+                                            <?php
+                                    } ?>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php //Display Inventory Based on device group
+                                    if ($result = $mysqli->query("
+                                        SELECT `m_name`, SUM(unit_used) as `sum`, `color_hex`, `unit`
+                                        FROM `materials`
+                                        LEFT JOIN `mats_used`
+                                        ON mats_used.m_id = `materials`.`m_id`
+                                        WHERE `m_parent` = 1
+                                        GROUP BY `m_name`, `color_hex`, `unit`
+                                        ORDER BY `m_name` ASC;
+                                    ")) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
+                                                ?>
+                                                <tr>
+                                                    <td><?php echo $row['m_name']; ?></td>
+                                                    <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
+                                                    <td><?php echo number_format($row['sum'])." ".$row['unit']; ?></td>
+                                                </tr>
+                                            <?php
+                                            } else {
+                                                ?>
+                                                <tr>
+                                                    <td><?php echo $row['m_name']; ?></td>
+                                                    <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
+                                                </tr>
+                                            <?php
+                                            }
+                                        }
+                                    } else {
+                                        ?>
+                                        <tr><td colspan="3">None</td></tr>
+                                    <?php
+                                    } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                
             </div>
             <!-- /.container-fluid -->
         </div>
@@ -367,31 +414,45 @@ $_SESSION['type'] = "home";
     <!-- /#wrapper --> 
 
  <script type="text/javascript">
+
+    var a = 0.05;
     function polyPrinter()
     {
-        var rate = 0.05;
+        a = document.getElementById("inputField1").value || a;
+        var rate = a;
         var volume = document.getElementById("polyprinter-input").value;
         var total = (volume * rate).toFixed(2);
         document.getElementById("polyprinter-output").innerHTML = "$ " + total;
     }
-    
+     
+    var b = 0.05; 
     function vinyl()
     {
-        var rate = 0.05;
+        b = document.getElementById("inputField2").value || b;
+        var rate = b;
         var length = document.getElementById("vinyl-input").value;
         var total = (rate * length).toFixed(2);
         document.getElementById("vinyl-output").innerHTML = "$" + total;
     }
+     
+    var c = 0.5;
     function uPrint()
     {
+        c = document.getElementById("inputField3").value || c;
         var conv_rate = 16.387
-        var rate1 = 0.5;
-        var rate2 = 0.5;
+        var rate1 = c;
+        var rate2 = c;
         var volume1 = document.getElementById("uPrint-material-input").value;
         var volume2 = document.getElementById("uPrint-support-input").value;
         var total = ((volume1 * conv_rate * rate1) + (volume2 * conv_rate * rate2)).toFixed(2);
         document.getElementById("uPrint-output").innerHTML = "$" + total;
     }
+     
+function changeTheVariable() 
+     {
+        a = document.getElementById("inputField").value || a;
+        document.getElementById("result").innerText = parseFloat(a);
+     }   
 </script>    
     
 </body>
