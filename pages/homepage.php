@@ -22,296 +22,11 @@ $_SESSION['type'] = "home";
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
+                
                 <div class="row">
-
-                    <!-- Overview-->
-                    <div class="col-lg-6">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <label>
-                                    <i class="fa fa-gears"></i> Overview </label>
-                            </div>
-
-                            <!-- PolyPrinter Status -->
-                            <div class="panel-body">
-                                <div class="row text-center">
-                                    <div class="col-xs-12 col-sm-3">
-                                        <h3>PolyPrinters</h3>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-3">
-                                        <h3>#2</h3>
-                                        <p>Now Serving</p>
-                                    </div>
-
-                                    <!-- Estimated Remaining Time -->
-                                    <div class="col-xs-4 col-sm-3">
-                                    <?php 
-                                    
-                                    // Returns the wait time (if any) as an overview
-                                    if ($result = $mysqli->query("
-                                        SELECT COUNT(*) AS NumFreeDevices
-                                        FROM devices
-                                        JOIN device_group ON devices.dg_id = device_group.dg_id
-                                        WHERE device_group.dg_id = 2 AND
-                                              devices.device_desc NOT IN (
-                                          
-                                            SELECT device_desc
-                                            FROM devices
-                                            JOIN transactions ON transactions.d_id = devices.device_id
-                                            JOIN device_group ON devices.dg_id = device_group.dg_id
-                                            WHERE device_group.dg_id = 2 AND
-                                                   status_id < 12
-                                        );
-                                    ")) {
-                                        // If the number of free devices is greater than zero than there should be not wait
-                                        if ($row  = $result->fetch_assoc()) {
-                                            ?> 
-                                                <h3> No Wait </h3>
-                                                <p>Wait Time</p>
-                                            <?php
-                                        }
-
-                                        // Since there are no open printers, find the least wait time
-                                        else {
-                                            if ($result = $mysqli->query("
-                                            SELECT device_desc, t_start, est_time
-                                            FROM devices
-                                            JOIN transactions ON transactions.d_id = devices.device_id
-                                            JOIN device_group ON devices.dg_id = device_group.dg_id
-                                            WHERE device_group.dg_id = 2 AND
-                                                   status_id < 12;
-                                            ")) {
-                                                global $min_time;
-                                                $row  = $result->fetch_assoc();
-                                                if ($row["NumFreeDevices"] > 0) {
-                                                    // If the device has a start time, then find the lowest wait time
-                                                    if ($row["t_start"]) {
-                                                        if (isset($min_time)) {
-                                                            if ($min_time > $row["est_time"]) {
-                                                                $min_time = $row["est_time"];
-                                                            }
-                                                        } else {
-                                                            $min_time = $row["est_time"];
-                                                        }
-                                                    }
-                                                }
-
-                                                // Display the wait time according to hours (if greater than 2) or minutes
-                                                if (isset($min_time)) {
-                                                    sscanf($min_time, "%d:%d:%d", $hours, $minutes, $seconds);
-                                                    // Display the time as hours only
-                                                    if ($hours > 2) {
-                                                        ?> 
-                                                            <h3> <?php echo $hours ?> </h3>
-                                                            <p>Hour Wait</p>
-                                                        <?php
-                                                    }
-                                                    // Display the time as minutes
-                                                    else {
-                                                        ?> 
-                                                            <h3> <?php echo($hours * 60) + $minutes ?> </h3>
-                                                            <p>Minute Wait</p>
-                                                        <?php
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    ?>  
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <h3>#3</h3>
-                                        <p>Next Issuable Number</p>
-                                    </div>
-                                </div>
-
-                                <!-- Laser Status -->
-                                <div class="row text-center">
-                                    <div class="col-xs-12 col-sm-3">
-                                        <h3>Lasers</h3>
-                                    </div>
-                                    <div class="col-xs-4 col-sm-3">
-                                        <h3>#L2</h3>
-                                        <p>Now Serving</p>
-                                    </div>
-                                    
-                                    <!-- Estimated Remaining Time -->
-                                    <div class="col-xs-4 col-sm-3">
-                                    <?php 
-                                    // Returns the wait time (if any) as an overview
-                                    if ($result = $mysqli->query("
-                                        SELECT COUNT(*) AS NumFreeDevices
-                                        FROM devices
-                                        JOIN device_group ON devices.dg_id = device_group.dg_id
-                                        WHERE device_group.dg_id = 4 AND
-                                              devices.device_desc NOT IN (
-                                          
-                                            SELECT device_desc
-                                            FROM devices
-                                            JOIN transactions ON transactions.d_id = devices.device_id
-                                            JOIN device_group ON devices.dg_id = device_group.dg_id
-                                            WHERE device_group.dg_id = 4 AND
-                                                   status_id < 12
-                                        );
-                                    ")) {
-                                        // If the number of free devices is greater than zero than there should be not wait
-                                        $row  = $result->fetch_assoc();
-                                        if ($row["NumFreeDevices"] > 0) {
-                                            ?> 
-                                                <h3> No Wait </h3>
-                                                <p>Wait Time</p>
-                                            <?php
-                                        }
-
-                                        // Since there are no open printers, find the least wait time
-                                        else {
-                                            // Get all of the used devices and their estimated times of completion
-                                            if ($result = $mysqli->query("
-                                            SELECT device_desc, t_start, est_time
-                                            FROM devices
-                                            JOIN transactions ON transactions.d_id = devices.device_id
-                                            JOIN device_group ON devices.dg_id = device_group.dg_id
-                                            WHERE device_group.dg_id = 4 AND
-                                                   status_id < 12;
-                                            ")) {
-                                                global $min_time;
-                                                while ($row = $result->fetch_assoc()) {
-                                                    // If the device has a start time, then find the lowest wait time
-                                                    if ($row["t_start"]) {
-                                                        if (isset($min_time)) {
-                                                            if ($min_time > $row["est_time"]) {
-                                                                $min_time = $row["est_time"];
-                                                            }
-                                                        } else {
-                                                            $min_time = $row["est_time"];
-                                                        }
-                                                    }
-                                                }
-
-                                                // Display the wait time according to hours (if greater than 2) or minutes
-                                                if (isset($min_time)) {
-                                                    sscanf($min_time, "%d:%d:%d", $hours, $minutes, $seconds);
-                                                    // Display the time as hours only
-                                                    if ($hours > 2) {
-                                                        ?> 
-                                                            <h3> <?php echo $hours ?> </h3>
-                                                            <p>Hour Wait</p>
-                                                        <?php
-                                                    }
-                                                    // Display the time as minutes
-                                                    else {
-                                                        ?> 
-                                                            <h3> <?php echo($hours * 60) + $minutes ?> </h3>
-                                                            <p>Minute Wait</p>
-                                                        <?php
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    ?>  
-                                    </div>
-                                    <div class="col-xs-4 col-sm-3">
-                                        <h3>#L0</h3>
-                                        <p>Next Issuable Number</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quotes -->
-                    <div class="col-lg-6">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <label><i class="fa fa-ticket fa-fw"></i>Quotes</label>
-                            </div>
-                            <!-- /.panel-heading -->
-                            <div class="panel-body">
-                                <!-- Nav tabs -->
-                                <ul class="nav nav-tabs">
-                                    <li class="active">
-                                        <a href="#polyprinter" data-toggle="tab">PolyPrinter</a>
-                                    </li>
-                                    <li>
-                                        <a href="#vinyl" data-toggle="tab">Vinyl</a>
-                                    </li>
-                                    <li>
-                                        <a href="#uprint" data-toggle="tab">uPrint</a>
-                                    </li>
-                                </ul>
-
-                                <!-- Tab panes -->
-                                <div class="tab-content">
-                                    <div class="tab-pane fade in active" id="polyprinter">
-                                        <h4>PolyPrinter Quote Tab</h4>
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <input id="polyprinter-input" class="form-control" onkeyup="polyPrinter()" onchange="polyPrinter()" type="number" min="0"
-                                                        max="1000" step=".5" autocomplete="off" placeholder="Enter PolyPrinter Material">
-                                                    <label for="form1" class="">Grams</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <h2 id="polyprinter-output" class="font-medium text-center">
-                                                    $0.00
-                                                </h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="vinyl">
-                                        <h4>Vinyl Quote Tab</h4>
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <input id="vinyl-input" class="form-control" onkeyup="vinyl()" onchange="vinyl()" type="number" min="0" max="1000" step=".5"
-                                                        autocomplete="off" placeholder="Enter Vinyl Material">
-                                                    <label for="form1" class="">Inches</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <h2 id="vinyl-output" class="font-medium text-center">
-                                                    $0.00
-                                                </h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="uprint">
-                                        <h4>uPrint Quote Tab</h4>
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <input id="uPrint-material-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000"
-                                                        step=".5" autocomplete="off" placeholder="Enter Model Material">
-                                                    <label for="form1" class="">Model in
-                                                        <sup> 3</sup>
-                                                    </label>
-                                                </div>
-                                                <div class="col-lg-13">
-                                                    <div class="form-group">
-                                                        <input id="uPrint-support-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000"
-                                                            step=".5" autocomplete="off" placeholder="Enter Support Material">
-                                                        <label for="form1" class="">Support in
-                                                            <sup> 3</sup>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <h2 id="uPrint-output" class="font-medium text-center">
-                                                    $0.00
-                                                </h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    
                     <!-- Equipment Status -->
-                    <div class="col-lg-12">
+                    <div class="col-md-8">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <label>
@@ -378,11 +93,11 @@ $_SESSION['type'] = "home";
                                             <table class="table table-striped table-bordered table-hover" <?php echo("id=\"indexTable_".$number_of_status_tables."\"") ?>>
                                             <thead>
                                                 <tr class="tablerow">
-                                                    <th align="right">Ticket</td>
-                                                    <th>Device</td>
-                                                    <th>Start Time</td>
-                                                    <th>Est Time Left</td>
-                                                    <th>Progress </td>
+                                                    <th align="right">Ticket</th>
+                                                    <th>Device</th>
+                                                    <th>Start Time</th>
+                                                    <th>Est Time Left</th>
+                                                    <th>Progress </th>
                                                     <?php if ($staff) {
                                                 ?> <th>Action</th><?php
                                             } ?>
@@ -450,19 +165,13 @@ $_SESSION['type'] = "home";
                                                             <?php 
                                                             
                                                             // Est Time Percentage = (now - start) / ((now - start) + est) * 100
-                                                            
-                                                            sscanf($row["est_time"], "%d:%d:%d", $hours, $minutes, $seconds);
-                                                            $time_seconds = isset($seconds) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
-
                                                             // if the estimated time is greater than the current time then display a progress bar, else show 100%
-                                                            if ($time_seconds > 0)
-                                                            {
-                                                                $percentage = (strtotime("now") - strtotime($row["t_start"])) / ((strtotime("now") - strtotime($row["t_start"])) + $time_seconds) * 100;
+                                                            if ($time_seconds > 0) {
+                                                                $percentage = (1 - ($time_seconds / ((strtotime("now") - strtotime($row["t_start"])) + $time_seconds))) * 100;
                                                             } else {
                                                                 $percentage = 100;
                                                             }
-                                                            
-
+                                                        
                                                             echo $percentage."%"; ?> 
                                                         "/> </div> </td>
                                                         <?php
@@ -552,11 +261,295 @@ $_SESSION['type'] = "home";
                                     </div>
                                 </div>
                             </div>
-                            <!-- /.panel-body -->
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                    <!-- Overview-->
+                    <div class="col-lg-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <label>
+                                    <i class="fa fa-th"></i> Overview</label>
+                            </div>
+
+                            
+                            <div class="panel-body">
+                            
+                                <!-- PolyPrinter Status -->
+                                <div class="row text-center">
+                                    <div class="col-xs-12">
+                                        <h3>PolyPrinters</h3>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-6">
+                                        <h3>#2</h3>
+                                        <p>Now Serving</p>
+                                    </div>
+
+                                    <!-- Estimated Remaining Time -->
+                                    <div class="col-xs-6">
+                                    <?php 
+                                    
+                                    // Returns the wait time (if any) as an overview
+                                    if ($result = $mysqli->query("
+                                        SELECT COUNT(*) AS NumFreeDevices
+                                        FROM devices
+                                        JOIN device_group ON devices.dg_id = device_group.dg_id
+                                        WHERE device_group.dg_id = 2 AND
+                                              devices.device_desc NOT IN (
+                                          
+                                            SELECT device_desc
+                                            FROM devices
+                                            JOIN transactions ON transactions.d_id = devices.device_id
+                                            JOIN device_group ON devices.dg_id = device_group.dg_id
+                                            WHERE device_group.dg_id = 2 AND
+                                                   status_id < 12
+                                        );
+                                    ")) {
+                                        // If the number of free devices is greater than zero than there should be not wait
+                                        if ($row  = $result->fetch_assoc()) {
+                                            ?> 
+                                                <h3> No Wait </h3>
+                                                <p>Wait Time</p>
+                                            <?php
+                                        }
+
+                                        // Since there are no open printers, find the least wait time
+                                        else {
+                                            if ($result = $mysqli->query("
+                                            SELECT device_desc, t_start, est_time
+                                            FROM devices
+                                            JOIN transactions ON transactions.d_id = devices.device_id
+                                            JOIN device_group ON devices.dg_id = device_group.dg_id
+                                            WHERE device_group.dg_id = 2 AND
+                                                   status_id < 12;
+                                            ")) {
+                                                global $min_time;
+                                                $row  = $result->fetch_assoc();
+                                                if ($row["NumFreeDevices"] > 0) {
+                                                    // If the device has a start time, then find the lowest wait time
+                                                    if ($row["t_start"]) {
+                                                        if (isset($min_time)) {
+                                                            if ($min_time > $row["est_time"]) {
+                                                                $min_time = $row["est_time"];
+                                                            }
+                                                        } else {
+                                                            $min_time = $row["est_time"];
+                                                        }
+                                                    }
+                                                }
+
+                                                // Display the wait time according to hours (if greater than 2) or minutes
+                                                if (isset($min_time)) {
+                                                    sscanf($min_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                    // Display the time as hours only
+                                                    if ($hours > 2) {
+                                                        ?> 
+                                                            <h3> <?php echo $hours ?> </h3>
+                                                            <p>Hour Wait</p>
+                                                        <?php
+                                                    }
+                                                    // Display the time as minutes
+                                                    else {
+                                                        ?> 
+                                                            <h3> <?php echo($hours * 60) + $minutes ?> </h3>
+                                                            <p>Minute Wait</p>
+                                                        <?php
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    ?>  
+                                    </div>
+                                </div>
+
+                                <!-- Laser Status -->
+                                <div class="row text-center">
+                                    <div class="col-xs-12">
+                                        <h3>Lasers</h3>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <h3>#L2</h3>
+                                        <p>Now Serving</p>
+                                    </div>
+                                    
+                                    <!-- Estimated Remaining Time -->
+                                    <div class="col-xs-6">
+                                    <?php 
+                                    // Returns the wait time (if any) as an overview
+                                    if ($result = $mysqli->query("
+                                        SELECT COUNT(*) AS NumFreeDevices
+                                        FROM devices
+                                        JOIN device_group ON devices.dg_id = device_group.dg_id
+                                        WHERE device_group.dg_id = 4 AND
+                                              devices.device_desc NOT IN (
+                                          
+                                            SELECT device_desc
+                                            FROM devices
+                                            JOIN transactions ON transactions.d_id = devices.device_id
+                                            JOIN device_group ON devices.dg_id = device_group.dg_id
+                                            WHERE device_group.dg_id = 4 AND
+                                                   status_id < 12
+                                        );
+                                    ")) {
+                                        // If the number of free devices is greater than zero than there should be not wait
+                                        $row  = $result->fetch_assoc();
+                                        if ($row["NumFreeDevices"] > 0) {
+                                            ?> 
+                                                <h3> No Wait </h3>
+                                                <p>Wait Time</p>
+                                            <?php
+                                        }
+
+                                        // Since there are no open printers, find the least wait time
+                                        else {
+                                            // Get all of the used devices and their estimated times of completion
+                                            if ($result = $mysqli->query("
+                                            SELECT device_desc, t_start, est_time
+                                            FROM devices
+                                            JOIN transactions ON transactions.d_id = devices.device_id
+                                            JOIN device_group ON devices.dg_id = device_group.dg_id
+                                            WHERE device_group.dg_id = 4 AND
+                                                   status_id < 12;
+                                            ")) {
+                                                global $min_time;
+                                                while ($row = $result->fetch_assoc()) {
+                                                    // If the device has a start time, then find the lowest wait time
+                                                    if ($row["t_start"]) {
+                                                        if (isset($min_time)) {
+                                                            if ($min_time > $row["est_time"]) {
+                                                                $min_time = $row["est_time"];
+                                                            }
+                                                        } else {
+                                                            $min_time = $row["est_time"];
+                                                        }
+                                                    }
+                                                }
+
+                                                // Display the wait time according to hours (if greater than 2) or minutes
+                                                if (isset($min_time)) {
+                                                    sscanf($min_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                    // Display the time as hours only
+                                                    if ($hours > 2) {
+                                                        ?> 
+                                                            <h3> <?php echo $hours ?> </h3>
+                                                            <p>Hour Wait</p>
+                                                        <?php
+                                                    }
+                                                    // Display the time as minutes
+                                                    else {
+                                                        ?> 
+                                                            <h3> <?php echo($hours * 60) + $minutes ?> </h3>
+                                                            <p>Minute Wait</p>
+                                                        <?php
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    ?>  
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <!-- /.panel -->
                     </div>
 
+                    <!-- Quotes -->
+                    <div class="col-lg-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <label><i class="fa fa-ticket fa-tag"></i>  Quotes</label>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs">
+                                    <li class="active">
+                                        <a href="#polyprinter" data-toggle="tab">PolyPrinter</a>
+                                    </li>
+                                    <li>
+                                        <a href="#vinyl" data-toggle="tab">Vinyl</a>
+                                    </li>
+                                    <li>
+                                        <a href="#uprint" data-toggle="tab">uPrint</a>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <div class="tab-pane fade in active" id="polyprinter">
+                                        <h4>PolyPrinter Quote</h4>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <input id="polyprinter-input" class="form-control" onkeyup="polyPrinter()" onchange="polyPrinter()" type="number" min="0"
+                                                        max="1000" step=".5" autocomplete="off" placeholder="Amount">
+                                                    <label for="form1" class="">Grams</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <h2 id="polyprinter-output" class="font-medium text-center">
+                                                    $0.00
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="vinyl">
+                                        <h4>Vinyl Quote</h4>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <input id="vinyl-input" class="form-control" onkeyup="vinyl()" onchange="vinyl()" type="number" min="0" max="1000" step=".5"
+                                                        autocomplete="off" placeholder="Amount">
+                                                    <label for="form1" class="">Inches</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <h2 id="vinyl-output" class="font-medium text-center">
+                                                    $0.00
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="uprint">
+                                        <h4>uPrint Quote</h4>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <input id="uPrint-material-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000"
+                                                        step=".5" autocomplete="off" placeholder="Amount">
+                                                    <label for="form1" class="">Model in
+                                                        <sup> 3</sup>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-13">
+                                                    <div class="form-group">
+                                                        <input id="uPrint-support-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000"
+                                                            step=".5" autocomplete="off" placeholder="Amount">
+                                                        <label for="form1" class="">Support in
+                                                            <sup> 3</sup>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <h2 id="uPrint-output" class="font-medium text-center">
+                                                    $0.00
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- </div> -->
+                <!--<div class="row"> -->
                     <!-- Materials -->
                     <div class="col-lg-4">
                         <div class="panel panel-default">
@@ -565,6 +558,7 @@ $_SESSION['type'] = "home";
                                     <i class="fa fa-suitcase"></i> Inventory </label>
                             </div>
                             <div class="panel-body">
+
                                 <table class="table table-condensed">
                                     <thead>
                                         <tr>
@@ -617,14 +611,10 @@ $_SESSION['type'] = "home";
                         </div>
                     </div>
                 </div>
-                <!-- /.row -->
+                <!-- </div> -->
             </div>
-            <!-- /.panel -->
         </div>
-    </div>
-    <!-- /.container-fluid -->
-    </div>
-    <!-- /#page-wrapper -->
+</div>
 
     <script type="text/javascript">
         function polyPrinter() {
@@ -672,25 +662,9 @@ $_SESSION['type'] = "home";
 	
 <?php
         }  ?>
-             $("#indexTable_0").DataTable({
+
+            $("#indexTable_0").DataTable({
             "iDisplayLength": 25,
             "order": []
-            });
-            $("#indexTable_1").DataTable({
-            "iDisplayLength": 25,
-            "order": []
-            });
-            $("#indexTable_2").DataTable({
-            "iDisplayLength": 25,
-            "order": []
-            });
-            $("#indexTable_3").DataTable({
-            "iDisplayLength": 25,
-            "order": []
-            });
-            $("#indexTable_4").DataTable({
-            "iDisplayLength": 25,
-            "order": []
-            });
-        
+            });      
 </script>
