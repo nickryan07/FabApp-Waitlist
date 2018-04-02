@@ -107,7 +107,8 @@ class Wait_queue {
                     ('$operator','$dg_id', CURRENT_TIMESTAMP);
                 ")){
 
-                    self::sendNotification($phone, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", "");
+                    self::sendNotification($phone, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", 'From: [your_gmail_account_username]@gmail.com' . "\r\n" .
+            'MIME-Version: 1.0');
                     echo ("\nSuccessfully updated contact info!");
                     return $mysqli->insert_id;
                 } else {
@@ -157,11 +158,22 @@ class Wait_queue {
     
     //Probaby needs to be a class
     public static function sendNotification($phone, $subject, $message, $headers) {
+        global $mysqli;
         // This function needs to query the carrier table and send an email to all combinations
-        if(mail("".$phone."@tmomail.net", $subject, $message, $headers))
+        /*if(mail("".$phone."@tmomail.net", $subject, $message, $headers))
             echo "Email sent";
         else
-            echo "Email sending failed";
+            echo "Email sending failed";*/
+        if ($result = $mysqli->query("
+            SELECT email
+            FROM carrier
+        ")){
+            while ( $row = $result->fetch_assoc() ){
+                mail("".$phone."".$row['email']."", $subject, $message, $headers);
+            }
+        } else {
+            echo("Carrier query failed!");
+        }
     }
 
     public static function regexPhone($phone) {
