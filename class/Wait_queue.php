@@ -169,7 +169,8 @@ class Wait_queue {
             FROM carrier
         ")){
             while ( $row = $result->fetch_assoc() ){
-                mail("".$phone."".$row['email']."", $subject, $message, $headers);
+                list($a, $b) = explode('number', $row['email']);
+                mail("".$phone."".$b."", $subject, $message, $headers);
             }
         } else {
             echo("Carrier query failed!");
