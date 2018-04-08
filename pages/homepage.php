@@ -30,7 +30,8 @@ $_SESSION['type'] = "home";
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <label>
-                                    <i class="fa fa-tasks"></i> Equipment Status</label>
+                                    <i class="fa fa-tasks"></i> Equipment Status
+                                </label>
                             </div>
                             <!-- Tabs -->
                             <div class="panel-body">
@@ -84,6 +85,7 @@ $_SESSION['type'] = "home";
                                         do {
                                             global $tab;
                                             
+                                            // Give all of the dynamic tables a name so they can be called when their tab is clicked
                                             if ($isAllTable) {
                                                 ?> <div class="tab-pane active in" id="all"> <?php
                                             } else {

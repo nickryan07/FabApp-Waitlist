@@ -16,6 +16,17 @@ function endTicket(trans_id, device_desc) {
     }
 }
 
+function removeFromWaitlist(queueNum, operator, device_id, device_group_id) {
+    var message = "Are you sure you want to remove " + operator + " from the Wait Queue?";
+    var answer = confirm(message);
+    if (answer){
+        var dest = "/pages/endWaitList.php?q_id=";
+        dest = dest.concat(queueNum);
+        
+        window.location.href = dest;
+    }
+}
+
 //fire off modal & optional dismissal timer
 function goModal(title, body, auto){
     document.getElementById("modal-title").innerHTML = title;

@@ -290,62 +290,142 @@ $_SESSION['type'] = "home";
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="table-responsive">
-                                <table class="table table-striped">
+                            <ul class="nav nav-tabs">
+                                    <!-- Have at least the 'All' tab which will have all devices -->
+                                    <li class="active">
+                                        <a href="#device_group_tab" data-toggle="tab" aria-expanded="false">Device Groups</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#device_tab" data-toggle="tab" aria-expanded="false">Devices</a>
+                                    </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="device_group_tab">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th><i class="fa fa-th-list"></i> Queue #</th>
+                                                <th><i class="far fa-user"></i> MavID</th>
+                                                <th><i class="fa fa-th-large"></i> Device Group</th>
+                                                <th><i class="far fa-calendar-alt"></i> Start</th>
+                                                <th><i class="far fa-clock"></i> Time Left</th>
+                                                <th><i class="far fa-flag"></i> Alerts</th>
+                                                <th><i class="fa fa-times"></i> Remove</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            <?php 
+                                            
+                                            // Display all of the students in the wait queue for a device group
+
+                                            if ($result = $mysqli->query("
+                                            SELECT *
+                                            FROM wait_queue WQ JOIN device_group DG ON WQ.devgr_id = DG.dg_id
+                                            WHERE valid = 'Y'
+                                            ORDER BY Q_id;
+                                            ")) {
+                                                $counter = 1;
+                                                while ($row = $result->fetch_assoc()) {
+                                                    ?>
+                                                    <tr>
+                                                        <!-- Wait Queue Number -->
+                                                        <td><?php echo($counter++) ?></td>
+                                                        <!-- Operator ID --> 
+                                                        <td><?php echo($row['Operator']) ?></td>
+                                                        <!-- Device Group -->
+                                                        <td><?php echo($row['dg_desc']) ?></td>
+                                                        <!-- Start Time -->
+                                                        <td><?php echo( date($sv['dateFormat'],strtotime($row['Start_date'])) ) ?></td>
+                                                        <!-- Estimated Time Left -->
+                                                        <td><?php echo($row['estTime']) ?></td>
+                                                        <!-- Send an Alert -->
+                                                        <td>Send Alert</td>
+                                                        <!-- Remove From Wait Queue -->
+                                                        <td> 
+                                                            <div style="text-align: center">
+                                                                <button class="btn btn-danger btn-circle" data-target="#removeModal" data-toggle="modal" 
+                                                                        onclick="removeFromWaitlist(<?php echo $row["Q_id"].", ".$row["Operator"].", undefined, ".$row["Devgr_id"]; ?>)">
+                                                                        <i class="glyphicon glyphicon-remove"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                            }                                        
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="tab-pane fade in" id="device_tab">
+                                <table class="table table-striped table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Ticket #</th>
-                                            <th>MavID</th>
-                                            <th>Time Left</th>
-                                            <th>Cancel Wait</th>
+                                            <th><i class="fa fa-th-list"></i> Queue #</th>
+                                            <th><i class="far fa-user"></i> MavID</th>
+                                            <th><i class="fa fa-th-large"></i> Device</th>
+                                            <th><i class="far fa-calendar-alt"></i> Start</th>
+                                            <th><i class="far fa-clock"></i> Time Left</th>
+                                            <th><i class="far fa-flag"></i> Alerts</th>
+                                            <th><i class="fa fa-times"></i> Remove</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>1001346923</td>
-                                            <td>01:12:02</td> <td><div style="text-align: center"><button class="btn btn-danger btn-circle" type="button"><i class="glyphicon glyphicon-remove"></i></button></div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>1001946023</td>
-                                            <td>02:52:15</td> <td><div style="text-align: center"><button class="btn btn-danger btn-circle" type="button"><i class="glyphicon glyphicon-remove"></i></button></div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>1001929123</td>
-                                            <td>02:59:23</td> <td><div style="text-align: center"><button class="btn btn-danger btn-circle" type="button"><i class="glyphicon glyphicon-remove"></i></button></div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>1001948285</td>
-                                            <td>03:31:14</td> <td><div style="text-align: center"><button class="btn btn-danger btn-circle" type="button"><i class="glyphicon glyphicon-remove"></i></button></div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>1001935024</td>
-                                            <td>03:45:46</td> <td><div style="text-align: center"><button class="btn btn-danger btn-circle" type="button"><i class="glyphicon glyphicon-remove"></i></button></div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>6</td>
-                                            <td>1001935025</td>
-                                            <td>04:14:32</td> <td><div style="text-align: center"><button class="btn btn-danger btn-circle" type="button"><i class="glyphicon glyphicon-remove"></i></button></div></td>
-                                        </tr>
+
+                                        <?php 
+                                        
+                                        // Display all of the students in the wait queue for a device
+
+                                        if ($result = $mysqli->query("
+                                            SELECT Q_id, Operator, Start_date, device_desc, Dev_id
+                                            FROM wait_queue WQ JOIN devices D ON WQ.Dev_id = D.device_id
+                                            WHERE valid = 'Y'
+                                            ORDER BY Q_id;
+                                        ")) {
+                                            $counter = 1;
+                                            while ($row = $result->fetch_assoc()) {
+                                                ?>
+                                            
+                                                <tr>
+                                                    <!-- Wait Queue Number -->
+                                                    <td><?php echo($counter++) ?></td>
+                                                    <td><?php echo($row['Operator']) ?></td>
+                                                    <td><?php echo($row['device_desc']) ?></td>
+                                                    <td><?php echo( date($sv['dateFormat'],strtotime($row['Start_date'])) ) ?></td>
+                                                    <td><?php echo($row['estTime']) ?></td>
+                                                    <td>Send Alert</td>
+                                                    <td> 
+                                                        <div style="text-align: center">
+                                                            <button class="btn btn-danger btn-circle" data-target="#removeModal" data-toggle="modal" 
+                                                                    onclick="removeFromWaitlist(<?php echo $row["Q_id"].", ".$row["Operator"].", ".$row['Dev_id'].", undefined"; ?>)">
+                                                                    <i class="glyphicon glyphicon-remove"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        }                                        
+                                        ?>
                                     </tbody>
-                                </table>
+                                </table>                                
+                                </div>
+                            </div>
                             </div>
                             <!-- /.table-responsive -->
                         </div>
-                        <!-- /.panel-body -->
-                        <div class="panel-footer">
-                        </div>
-                    </div>
-                    <!-- /.panel -->
+
                 </div>
+                
                 <!-- /.col-lg-13 -->
                 </div>
                 <!-- /.col-lg-6 -->
                 </div>
                 <!-- /.row -->
+
 
                     <div class="col-lg-4">
                         <div class="panel panel-default">
@@ -448,7 +528,7 @@ $_SESSION['type'] = "home";
         document.getElementById("uPrint-output").innerHTML = "$" + total;
     }
      
-function changeTheVariable() 
+    function changeTheVariable() 
      {
         a = document.getElementById("inputField").value || a;
         document.getElementById("result").innerText = parseFloat(a);
@@ -459,6 +539,7 @@ function changeTheVariable()
 <!-- jQuery -->
     <script src="../vendor/jquery/jquery.min.js"></script>
 
+     <script src="../vendor/fabapp/fabapp.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
 
@@ -466,5 +547,6 @@ function changeTheVariable()
     <script src="../vendor/metisMenu/metisMenu.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="../dist/js/sb-admin-2.js"></script>
+    <script src="../vendor/blackrock-digital/js/sb-admin-2.js"></script>
+
 </html>

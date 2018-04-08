@@ -33,7 +33,7 @@ if (!$staff || $staff->getRoleID() < 7){
                             <tr>
                                 <td><a href="#" data-toggle="tooltip" data-placement="top" title="Which device does this wait ticket belong to?">Select Device or Group</a></td>
                                 <td>
-                                    <select name="d_id" id="d_id" onchange="selectDevice(this)" tabindex="1">
+                                <select name="d_id" id="d_id" onchange="selectDevice(this)" tabindex="1">
                                         <option disabled hidden selected value="">Device</option>
                                         <?php if($result = $mysqli->query("
                                             SELECT DISTINCT `devices`.`d_id`, `devices`.`device_desc`
