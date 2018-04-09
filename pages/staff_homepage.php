@@ -11,33 +11,9 @@ $_SESSION['type'] = "home";
 <html lang="en">
 
 <head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
-
+    <title>Waitlist Staff Homepage</title>
     
-    <!-- Bootstrap Core CSS -->
-
-    <!-- MetisMenu CSS -->
-
-    <!-- Custom CSS -->
-
-    <!-- Custom Fonts -->
-
-    
-    <link href="../css/style.css" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -216,38 +192,62 @@ $_SESSION['type'] = "home";
                 <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-print fa-fw"></i>Start Print
+                            <i class="fa fa-print fa-fw"></i>Create Ticket
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                         <div class="row">
-                        <div class="col-lg-2">
-                            <h1 class="text-center">#7</h1>
+                        <div class="col-lg-4">
+                        <label>Equipment: </label>
+                        <div class="col-lg-13">
+                            <label>MavID: </label>
                         </div>
-                         <div class="col-lg-5">
-                            <div class="form-group">
-                                <label>MavID</label>
-                                <select class="form-control">
-                                    <option>1001244463</option>
-                                    <option>1001457294</option>
-                                    <option>1001936203</option>
-                                    <option>1001934034</option>
-                                </select>
-                            </div>
-                         </div>
-                        <div class="col-lg-5">
-                            <div class="form-group">
-                                <label>Equipment</label>
-                                <select class="form-control">
-                                    <option>PolyPrinter1</option>
-                                    <option>PolyPrinter2</option>
-                                    <option>PolyPrinter3</option>
-                                    <option>PolyPrinter4</option>
-                                </select>
-                            </div>
+                            
                         </div>
+                            <form name="tcForm" id="tcForm" autocomplete="off" method="POST" action="">
+                                <tr>
+                                <select name="d_id" id="d_id" onchange="selectDevice(this)" tabindex="1">
+                                    <option disabled hidden selected value="">Device</option>
+                                    <?php if($result = $mysqli->query("
+                                        SELECT d_id, device_desc
+                                        FROM devices
+                                        ORDER BY device_desc
+                                    ")){
+                                        while($row = $result->fetch_assoc()){
+                                            echo("<option value='".$row["d_id"]."'>".$row["device_desc"]."</option>");
+                                        }echo $d_id;
+                                    } else {
+                                        echo ("Device list Error - SQL ERROR");
+                                    }?>
+                                </select> 
+                                </tr>
+
+                                <tr>
+                                    <select name="Operator" id="Operator" onchange="" tabindex="1">
+                                        <option disabled hidden selected value="">MavID</option>
+                                        <?php if($result = $mysqli->query("
+                                            SELECT `wait_queue`.`Operator`, `wait_queue`.`Q_id`
+                                            FROM `wait_queue`
+                                            WHERE `valid` = 'Y'
+                                            ORDER BY `Q_id`
+                                        ")){
+                                            while($row = $result->fetch_assoc()){
+                                                echo("<option value='$row[Q_id]'>$row[Operator]</option>");
+                                            }
+                                        } else {
+                                            echo ("Device list Error - SQL ERROR");
+                                        }?>
+                                    </select>
+                                </tr>
+                            </form>
                         </div>
-                            <a href="#" class="btn btn-default btn-block">Start</a>
+                            
+                            <button type="button" id="addBtn" onclick="newTicket()">Create Ticket</button>
+                            
+                        
+
+
+                            <!--<a href="#" class="btn btn-default btn-block">Start</a>-->
                         </div>
                         <!-- /.panel-body -->
                         <div class="panel-footer">
@@ -255,41 +255,6 @@ $_SESSION['type'] = "home";
                     </div>
                     <!-- /.panel -->
                   <div class="col-lg-13">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-ticket fa-fw"></i>Equipment Status
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                        <div class="row">
-                        <div class="col-lg-12">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <img class="img-fluid m-2" src="../images/polyprinter.svg" alt="Card image cap" style="max-height:100px;">
-                                </div>
-                                <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/laser.svg" alt="Card image cap" style="max-height:100px;">
-                                </div>
-                                <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/sewing-machine.svg" alt="Card image cap" style="max-height:100px;">
-                                </div>
-                                <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/uPrint.svg" alt="Card image cap" style="max-height:100px;">
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                            <a href="#" class="btn btn-default btn-block">Manage</a>
-                        </div>
-                        <!-- /.panel-body -->
-                        <div class="panel-footer">
-                        </div>
-                    </div>
-                    <!-- /.panel -->
-                  </div>
-                  <!-- /.col-lg-13 -->
-
-                <div class="col-lg-13">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-ticket fa-fw"></i>View and Manage Quotes
@@ -407,6 +372,41 @@ $_SESSION['type'] = "home";
                         </div>
                     </div>
                     <!-- /.panel -->
+                  </div>
+                  <!-- /.col-lg-13 -->
+
+                <div class="col-lg-13">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-ticket fa-fw"></i>Equipment Status
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                        <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <img class="img-fluid m-2" src="../images/polyprinter.svg" alt="Card image cap" style="max-height:100px;">
+                                </div>
+                                <div class="col-sm-3">
+                                    <img class="img-fluid" src="../images/laser.svg" alt="Card image cap" style="max-height:100px;">
+                                </div>
+                                <div class="col-sm-3">
+                                    <img class="img-fluid" src="../images/sewing-machine.svg" alt="Card image cap" style="max-height:100px;">
+                                </div>
+                                <div class="col-sm-3">
+                                    <img class="img-fluid" src="../images/uPrint.svg" alt="Card image cap" style="max-height:100px;">
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                            <a href="#" class="btn btn-default btn-block">Manage</a>
+                        </div>
+                        <!-- /.panel-body -->
+                        <div class="panel-footer">
+                        </div>
+                    </div>
+                    <!-- /.panel -->
                 </div>
                 <!-- /.col-lg-13 -->
                 </div>
@@ -497,6 +497,61 @@ $_SESSION['type'] = "home";
 
  <script type="text/javascript">
 
+    var device = "";
+    var list = ["title", "tm_desc", "hours", "minutes", "tm_required", "class_size"];
+<?php if($staff && !preg_match('(input_)', $_SESSION['type']) ) { ?>
+    window.onload = function(){
+        document.getElementById("dg_id").selectedIndex = 0;
+        document.getElementById("d_id").selectedIndex = 0;
+    };
+<?php } ?>
+<?php if ( $staff && strcmp( $_SESSION['type'], "input_add") == 0){ ?>
+    var addBtn = document.getElementById("editBtn");
+    //change the button
+    addBtn.firstChild.data = "Save";
+    addBtn.classList.remove('btn-basic');
+    addBtn.classList.add('btn-info');
+
+    //enable fields
+    for( i = 0; i < list.length; i++){
+        document.getElementById(list[i]).disabled=false;
+    }
+<?php } ?>
+     
+    function newTicket(){
+        if (device  != ""){
+            var dest = "/pages/create.php?";
+            dest = dest.concat(device);
+            console.log(dest);
+            window.location.href = dest;
+        } else {
+            message = "Please select a device.";
+            var answer = alert(message);
+        }
+    }   
+         
+    
+    function selectDevice(element){
+        document.getElementById("td_deviceList").innerHTML = "";
+
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                document.getElementById("tm").innerHTML = this.responseText;
+            }
+        };
+        device = element.id + "=" + element.value
+        xmlhttp.open("GET","sub/getTM.php?" + device,true);
+        xmlhttp.send();
+    }   
+     
+     
     var a = 0.05;
     function polyPrinter()
     {
