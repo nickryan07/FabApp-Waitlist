@@ -77,9 +77,9 @@ class Wait_queue {
                   (`operator`,`dev_id`,`start_date`) 
                 VALUES
                     ('$operator','$d_id', CURRENT_TIMESTAMP);
-            ")){
-                Wait_queue::calculateWaitTimes();
+            ")){        
                 self::sendNotification($phone, $email, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", 'From: Fabapp Notifications' . "\r\n" .'');
+                Wait_queue::calculateWaitTimes();
                 echo ("\nSuccessfully updated contact info!");
                 return $mysqli->insert_id;
             } else {
@@ -106,9 +106,8 @@ class Wait_queue {
                 VALUES
                     ('$operator','$dg_id', CURRENT_TIMESTAMP);
                 ")){
+                    self::sendNotification($phone, $email, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", 'From: Fabapp Notifications' . "\r\n" .'');
                     Wait_queue::calculateWaitTimes();
-                    self::sendNotification($phone, $email, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", 'From: [your_gmail_account_username]@gmail.com' . "\r\n" .
-                    'MIME-Version: 1.0');
                     echo ("\nSuccessfully updated contact info!");
                     return $mysqli->insert_id;
                 } else {
