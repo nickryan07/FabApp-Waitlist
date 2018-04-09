@@ -204,8 +204,8 @@ $_SESSION['type'] = "home";
                         </div>
                             
                         </div>
-                            <form name="tcForm" id="tcForm" autocomplete="off" method="POST" action="">
                                 <tr>
+                            <form name="Form" id="Form" autocomplete="off" method="post" action="">
                                 <select name="d_id" id="d_id" onchange="selectDevice(this)" tabindex="1">
                                     <option disabled hidden selected value="">Device</option>
                                     <?php if($result = $mysqli->query("
@@ -220,13 +220,15 @@ $_SESSION['type'] = "home";
                                         echo ("Device list Error - SQL ERROR");
                                     }?>
                                 </select> 
+                                </form>
                                 </tr>
+
 
                                 <tr>
                                     <select name="Operator" id="Operator" onchange="" tabindex="1">
                                         <option disabled hidden selected value="">MavID</option>
                                         <?php if($result = $mysqli->query("
-                                            SELECT `wait_queue`.`Operator`, `wait_queue`.`Q_id`
+                                            SELECT `Operator`, `Q_id`
                                             FROM `wait_queue`
                                             WHERE `valid` = 'Y'
                                             ORDER BY `Q_id`
@@ -239,15 +241,14 @@ $_SESSION['type'] = "home";
                                         }?>
                                     </select>
                                 </tr>
-                            </form>
                         </div>
+                        
+    
                             
                             <button type="button" id="addBtn" onclick="newTicket()">Create Ticket</button>
                             
-                        
+                    
 
-
-                            <!--<a href="#" class="btn btn-default btn-block">Start</a>-->
                         </div>
                         <!-- /.panel-body -->
                         <div class="panel-footer">
@@ -498,26 +499,7 @@ $_SESSION['type'] = "home";
  <script type="text/javascript">
 
     var device = "";
-    var list = ["title", "tm_desc", "hours", "minutes", "tm_required", "class_size"];
-<?php if($staff && !preg_match('(input_)', $_SESSION['type']) ) { ?>
-    window.onload = function(){
-        document.getElementById("dg_id").selectedIndex = 0;
-        document.getElementById("d_id").selectedIndex = 0;
-    };
-<?php } ?>
-<?php if ( $staff && strcmp( $_SESSION['type'], "input_add") == 0){ ?>
-    var addBtn = document.getElementById("editBtn");
-    //change the button
-    addBtn.firstChild.data = "Save";
-    addBtn.classList.remove('btn-basic');
-    addBtn.classList.add('btn-info');
 
-    //enable fields
-    for( i = 0; i < list.length; i++){
-        document.getElementById(list[i]).disabled=false;
-    }
-<?php } ?>
-     
     function newTicket(){
         if (device  != ""){
             var dest = "/pages/create.php?";
@@ -532,29 +514,13 @@ $_SESSION['type'] = "home";
          
     
     function selectDevice(element){
-        document.getElementById("td_deviceList").innerHTML = "";
 
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {
-            // code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState === 4 && this.status === 200) {
-                document.getElementById("tm").innerHTML = this.responseText;
-            }
-        };
-        device = element.id + "=" + element.value
-        xmlhttp.open("GET","sub/getTM.php?" + device,true);
-        xmlhttp.send();
     }   
      
      
-    var a = 0.05;
     function polyPrinter()
     {
+        var a = 0.05;
         a = document.getElementById("inputField1").value || a;
         var rate = a;
         var volume = document.getElementById("polyprinter-input").value;
@@ -562,9 +528,10 @@ $_SESSION['type'] = "home";
         document.getElementById("polyprinter-output").innerHTML = "$ " + total;
     }
      
-    var b = 0.05; 
+
     function vinyl()
     {
+        var b = 0.05; 
         b = document.getElementById("inputField2").value || b;
         var rate = b;
         var length = document.getElementById("vinyl-input").value;
@@ -572,9 +539,9 @@ $_SESSION['type'] = "home";
         document.getElementById("vinyl-output").innerHTML = "$" + total;
     }
      
-    var c = 0.5;
     function uPrint()
     {
+        var c = 0.5;
         c = document.getElementById("inputField3").value || c;
         var conv_rate = 16.387
         var rate1 = c;
