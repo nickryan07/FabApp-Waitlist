@@ -328,6 +328,7 @@ $_SESSION['type'] = "home";
                                                 ORDER BY Q_id;
                                             ")) {
                                                 $counter = 1;
+                                                Wait_queue::calculateWaitTimes();
                                                 while ($row = $result->fetch_assoc()) {
                                                     ?>
                                                     <tr>
