@@ -72,7 +72,6 @@ class Wait_queue {
             ON DUPLICATE KEY UPDATE `Op_email` = '$email', `Op_phone` = '$phone';
             ")){
                 echo ("\nSuccessfully inserted ticket!");
-                //insertContactInfo($operator, $phone, $email);
                 if ($mysqli->query("
                 INSERT INTO wait_queue 
                   (`operator`,`dev_id`,`start_date`) 
@@ -101,7 +100,6 @@ class Wait_queue {
             ON DUPLICATE KEY UPDATE `Op_email` = '$email', `Op_phone` = '$phone';
             ")){
                 echo ("\nSuccessfully inserted ticket!");
-                //insertContactInfo($operator, $phone, $email);
                 if ($mysqli->query("
                 INSERT INTO wait_queue 
                   (`operator`,`devgr_id`,`start_date`) 
@@ -355,16 +353,18 @@ class Wait_queue {
             echo "Email sent";
         else
             echo "Email sending failed";*/
-        if ($result = $mysqli->query("
-            SELECT email
-            FROM carrier
-        ")){
-            while ( $row = $result->fetch_assoc() ){
-                list($a, $b) = explode('number', $row['email']);
-                mail("".$phone."".$b."", $subject, $message, $headers);
+        if(!empty($phone)) {
+            if ($result = $mysqli->query("
+                SELECT email
+                FROM carrier
+            ")){
+                while ( $row = $result->fetch_assoc() ){
+                    list($a, $b) = explode('number', $row['email']);
+                    mail("".$phone."".$b."", $subject, $message, $headers);
+                }
+            } else {
+                echo("Carrier query failed!");
             }
-        } else {
-            echo("Carrier query failed!");
         }
     }
 
