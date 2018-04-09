@@ -168,6 +168,13 @@ if (!$staff || $staff->getRoleID() < 7){
 include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/footer.php');
 ?>
 <script type="text/javascript">
+    function selectDevice(element){
+        if (element.id == 'd_id'){
+            document.getElementById("dg_id").selectedIndex = 0;
+        } else if (element.id == 'dg_id') {
+            document.getElementById("d_id").selectedIndex = 0;
+        }
+    }
     /*
     $('#teTable').DataTable({
         searching: false, 
