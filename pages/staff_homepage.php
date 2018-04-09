@@ -79,7 +79,7 @@ $_SESSION['type'] = "home";
                                     <div class="tab-pane fade active in" id="device_group_tab">
                                         <table class="table table-striped table-bordered table-hover">
                                             <thead>
-                                                <tr>
+                                                <tr align="center">
                                                     <th><i class="fa fa-th-list"></i> Queue #</th>
                                                     <th><i class="far fa-user"></i> MavID</th>
                                                     <th><i class="fa fa-th-large"></i> Device Group</th>
@@ -106,23 +106,28 @@ $_SESSION['type'] = "home";
                                                         ?>
                                                         <tr>
                                                             <!-- Wait Queue Number -->
-                                                            <td><?php echo($counter++) ?></td>
+                                                            <td align="center"><?php echo($counter++) ?></td>
                                                             <!-- Operator ID --> 
-                                                            <td><?php echo($row['Operator']) ?></td>
+                                                            <td align="center"><?php echo($row['Operator']) ?></td>
                                                             <!-- Device Group -->
-                                                            <td><?php echo($row['dg_desc']) ?></td>
+                                                            <td align="center"><?php echo($row['dg_desc']) ?></td>
                                                             <!-- Start Time -->
-                                                            <td><?php echo( date($sv['dateFormat'],strtotime($row['Start_date'])) ) ?></td>
+                                                            <td align="center"><?php echo( date($sv['dateFormat'],strtotime($row['Start_date'])) ) ?></td>
                                                             <!-- Estimated Time Left -->
                                                             <?php
-                                                            echo("<td id=\"est".$row["Q_id"]."\">".$row["estTime"]." </td>" );
-                                                                    $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $row["estTime"]);
-                                                                    sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
-                                                                    $time_seconds = $hours * 3600 + $minutes * 60 + $seconds;
-                                                                    array_push($device_array, array($row["Q_id"], $time_seconds, 1));
+                                                            if (isset($row['estTime']))
+                                                            {
+                                                                echo("<td align=\"center\" id=\"est".$row["Q_id"]."\">".$row["estTime"]." </td>" );
+                                                                $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $row["estTime"]);
+                                                                sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                                $time_seconds = $hours * 3600 + $minutes * 60 + $seconds;
+                                                                array_push($device_array, array($row["Q_id"], $time_seconds, 1));
+                                                            } else {
+                                                                echo ("<td/>");
+                                                            }
                                                             ?>
                                                             <!-- Send an Alert -->
-                                                            <td>Send Alert</td>
+                                                            <td align="center">Send Alert</td>
                                                             <!-- Remove From Wait Queue -->
                                                             <td> 
                                                                 <div style="text-align: center">
@@ -201,7 +206,7 @@ $_SESSION['type'] = "home";
 
                     </div>
                 <!-- /.col-lg-13 -->
-                
+
                 </div>
                 <!-- /.col-lg-6 -->
                 </div>
@@ -480,15 +485,15 @@ $_SESSION['type'] = "home";
         include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/footer.php');
         ?>
     <!-- /#wrapper -->
-<script>
-<?php foreach ($device_array as $da) { ?>
-	var time = <?php echo $da[1];?>;
-	var display = document.getElementById('est<?php echo $da[0];?>');
-	var dg_parent = <?php if ($da[2]) echo $da[2]; else echo "0";?>;
-	startTimer(time, display, dg_parent);
-	
-<?php } ?>
-</script>
+    <script>
+    <?php foreach ($device_array as $da) { ?>
+        var time = <?php echo $da[1];?>;
+        var display = document.getElementById('est<?php echo $da[0];?>');
+        var dg_parent = <?php if ($da[2]) echo $da[2]; else echo "0";?>;
+        startTimer(time, display, dg_parent);
+        
+    <?php } ?>
+    </script>
 
  <script type="text/javascript">
 

@@ -170,7 +170,7 @@ class Wait_queue {
             $row = $result->fetch_assoc();
             if (isset($row['Op_phone'])) {
                 // Send a notification that they have canceled their wait queue ticket
-                self::sendNotification($row['Op_phone'], "Fabapp Notification", "Your Wait Ticket has been cancelled", 'From: Fabapp Notifications' . "\r\n" .'');
+                self::sendNotification($row['Op_phone'], $row['Op_email'], "Fabapp Notification", "Your Wait Ticket has been cancelled", 'From: Fabapp Notifications' . "\r\n" .'');
             }                 
         }
         else {
