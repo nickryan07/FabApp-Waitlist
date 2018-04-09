@@ -282,6 +282,8 @@ $_SESSION['type'] = "home";
                         </div>
                     </div>
                     <!-- /.panel -->
+
+                <!-- Wait Queue -->
                 <div class="col-lg-13">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -319,12 +321,11 @@ $_SESSION['type'] = "home";
                                             <?php 
                                             
                                             // Display all of the students in the wait queue for a device group
-
                                             if ($result = $mysqli->query("
-                                            SELECT *
-                                            FROM wait_queue WQ JOIN device_group DG ON WQ.devgr_id = DG.dg_id
-                                            WHERE valid = 'Y'
-                                            ORDER BY Q_id;
+                                                SELECT *
+                                                FROM wait_queue WQ JOIN device_group DG ON WQ.devgr_id = DG.dg_id
+                                                WHERE valid = 'Y'
+                                                ORDER BY Q_id;
                                             ")) {
                                                 $counter = 1;
                                                 while ($row = $result->fetch_assoc()) {
@@ -339,7 +340,13 @@ $_SESSION['type'] = "home";
                                                         <!-- Start Time -->
                                                         <td><?php echo( date($sv['dateFormat'],strtotime($row['Start_date'])) ) ?></td>
                                                         <!-- Estimated Time Left -->
-                                                        <td><?php echo($row['estTime']) ?></td>
+                                                        <?php
+                                                        echo("<td id=\"est".$row["Q_id"]."\">".$row["estTime"]." </td>" );
+                                                                $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $row["estTime"]);
+                                                                sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                                $time_seconds = $hours * 3600 + $minutes * 60 + $seconds;
+                                                                array_push($device_array, array($row["Q_id"], $time_seconds, 1));
+                                                        ?>
                                                         <!-- Send an Alert -->
                                                         <td>Send Alert</td>
                                                         <!-- Remove From Wait Queue -->
@@ -492,6 +499,20 @@ $_SESSION['type'] = "home";
         <!-- /#page-wrapper -->
 
     <!-- /#wrapper --> 
+    <?php
+        //Standard call for dependencies
+        include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/footer.php');
+        ?>
+    <!-- /#wrapper -->
+<script>
+<?php foreach ($device_array as $da) { ?>
+	var time = <?php echo $da[1];?>;
+	var display = document.getElementById('est<?php echo $da[0];?>');
+	var dg_parent = <?php if ($da[2]) echo $da[2]; else echo "0";?>;
+	startTimer(time, display, dg_parent);
+	
+<?php } ?>
+</script>
 
  <script type="text/javascript">
 
@@ -536,17 +557,4 @@ $_SESSION['type'] = "home";
 </script>    
     
 </body>
-<!-- jQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-
-     <script src="../vendor/fabapp/fabapp.js"></script>
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="../vendor/blackrock-digital/js/sb-admin-2.js"></script>
-
 </html>
