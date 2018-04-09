@@ -68,7 +68,8 @@ class Wait_queue {
             INSERT INTO operator_info
                 (`Op_id`, `Op_email`, `Op_phone`, `last_contact`)
             VALUES
-            ('$operator', '$email', '$phone', CURRENT_TIMESTAMP);
+            ('$operator', '$email', '$phone', CURRENT_TIMESTAMP)
+            ON DUPLICATE KEY UPDATE `Op_email` = '$email', `Op_phone` = '$phone';
             ")){
                 echo ("\nSuccessfully inserted ticket!");
                 //insertContactInfo($operator, $phone, $email);
@@ -96,7 +97,8 @@ class Wait_queue {
             INSERT INTO operator_info
                 (`Op_id`, `Op_email`, `Op_phone`, `last_contact`)
             VALUES
-            ('$operator', '$email', '$phone', CURRENT_TIMESTAMP);
+            ('$operator', '$email', '$phone', CURRENT_TIMESTAMP)
+            ON DUPLICATE KEY UPDATE `Op_email` = '$email', `Op_phone` = '$phone';
             ")){
                 echo ("\nSuccessfully inserted ticket!");
                 //insertContactInfo($operator, $phone, $email);
