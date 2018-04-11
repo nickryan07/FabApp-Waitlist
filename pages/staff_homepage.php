@@ -59,7 +59,6 @@ $_SESSION['type'] = "home";
                                                     <th><i class="fa fa-th-list"></i> Queue #</th>
                                                     <th><i class="far fa-user"></i> MavID</th>
                                                     <th><i class="fa fa-th-large"></i> Device Group</th>
-                                                    <th><i class="far fa-calendar-alt"></i> Start</th>
                                                     <th><i class="far fa-clock"></i> Time Left</th>
                                                     <th><i class="far fa-flag"></i> Alerts</th>
                                                     <th><i class="fa fa-times"></i> Remove</th>
@@ -73,6 +72,7 @@ $_SESSION['type'] = "home";
                                                 if ($result = $mysqli->query("
                                                     SELECT *
                                                     FROM wait_queue WQ JOIN device_group DG ON WQ.devgr_id = DG.dg_id
+                                                                       LEFT JOIN operator_info OI ON WQ.Operator = OI.Op_id
                                                     WHERE valid = 'Y'
                                                     ORDER BY Q_id;
                                                 ")) {
@@ -84,26 +84,44 @@ $_SESSION['type'] = "home";
                                                             <!-- Wait Queue Number -->
                                                             <td align="center"><?php echo($counter++) ?></td>
                                                             <!-- Operator ID --> 
-                                                            <td align="center"><?php echo($row['Operator']) ?></td>
+                                                            <td>
+                                                                <i class="fab fa-grav fa-spin fa-lg" title="<?php echo($row['Operator']) ?>"></i>
+                                                                <?php if (isset($row['Op_phone'])) { ?> <i class="fas fa-mobile"   title="<?php echo ($row['Op_phone']) ?>"></i> <?php } ?>
+                                                                <?php if (isset($row['Op_email'])) { ?> <i class="fas fa-envelope" title="<?php echo ($row['Op_email']) ?>"></i> <?php } ?>
+                                                            </td>
                                                             <!-- Device Group -->
                                                             <td align="center"><?php echo($row['dg_desc']) ?></td>
-                                                            <!-- Start Time -->
-                                                            <td align="center"><?php echo( date($sv['dateFormat'],strtotime($row['Start_date'])) ) ?></td>
-                                                            <!-- Estimated Time Left -->
-                                                            <?php
-                                                            if (isset($row['estTime']))
-                                                            {
-                                                                echo("<td align=\"center\" id=\"est".$row["Q_id"]."\">".$row["estTime"]." </td>" );
-                                                                $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $row["estTime"]);
-                                                                sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
-                                                                $time_seconds = $hours * 3600 + $minutes * 60 + $seconds;
-                                                                array_push($device_array, array($row["Q_id"], $time_seconds, 1));
-                                                            } else {
-                                                                echo ("<td/>");
-                                                            }
-                                                            ?>
+                                                            <!-- Start Time, Estimated Time, Last Contact Time -->
+                                                            <td>
+                                                                <!-- Start Time -->
+                                                                <i class="far fa-calendar-alt" align="center" title="Started @ <?php echo( date($sv['dateFormat'],strtotime($row['Start_date'])) ) ?>"></i>
+                                                                
+                                                                <!-- Estimated Time -->
+                                                                <?php
+                                                                    if (isset($row['estTime']))
+                                                                    {
+                                                                        echo("<span align=\"center\" id=\"est".$row["Q_id"]."\">"."  ".$row["estTime"]."  </span>" );
+                                                                        $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $row["estTime"]);
+                                                                        sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                                        $time_seconds = $hours * 3600 + $minutes * 60 + $seconds;
+                                                                        array_push($device_array, array($row["Q_id"], $time_seconds, 1));
+                                                                    }
+                                                                ?>
+
+                                                                <!-- Last Contact Time -->
+                                                                <?php if (isset($row['last_contact'])) {
+                                                                    ?> <i class="far fa-bell" align="center" title="Last Alerted @ <?php echo(date($sv['dateFormat'], strtotime($row['last_contact']))) ?>"></i> <?php
+                                                                } ?>
+                                                            </td>
                                                             <!-- Send an Alert -->
-                                                            <td align="center">Send Alert</td>
+                                                            <td> 
+                                                                <div style="text-align: center">
+                                                                    <button class="btn btn-xs" data-target="#removeModal" data-toggle="modal" 
+                                                                            onclick="sendManualMessage(<?php echo $row["Q_id"]?>, 'The FabLab is waiting for you to start your print!')">
+                                                                            Send Alert
+                                                                    </button>
+                                                                </div>
+                                                            </td>
                                                             <!-- Remove From Wait Queue -->
                                                             <td> 
                                                                 <div style="text-align: center">
@@ -154,7 +172,9 @@ $_SESSION['type'] = "home";
                                                     <tr>
                                                         <!-- Wait Queue Number -->
                                                         <td><?php echo($counter++) ?></td>
-                                                        <td><?php echo($row['Operator']) ?></td>
+                                                        
+                                                        <!-- Operator -->
+                                                        <td><i class="fab fa-grav fa-spin fa-lg" title="<?php echo($row['Operator']) ?>"></i> </td>
                                                         <td><?php echo($row['device_desc']) ?></td>
                                                         <td><?php echo( date($sv['dateFormat'],strtotime($row['Start_date'])) ) ?></td>
                                                         <td><?php echo($row['estTime']) ?></td>
@@ -556,7 +576,14 @@ $_SESSION['type'] = "home";
      {
         a = document.getElementById("inputField").value || a;
         document.getElementById("result").innerText = parseFloat(a);
-     }   
+     } 
+     
+     function sendManualMessage(q_id, message)
+     {
+        var dest = "/pages/endWaitList.php?q_id=" + q_id + "&message=" + message;
+        window.location.href = dest;
+        //window.location.href = "/pages/staff_homepage.php";
+     }
 </script>    
     
 </body>

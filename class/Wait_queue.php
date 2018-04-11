@@ -9,13 +9,16 @@ class Wait_queue {
     private $q_id;
     private $valid;
     private $operator;
+    private $phone_num;
+    private $email;
+    private $last_contacted;
     
     public function __construct($q_id){
         global $mysqli;
 
         if ($result = $mysqli->query("
-            SELECT *
-            FROM wait_queue
+            SELECT `Q_id`, `Operator`, `Dev_id`, `Devgr_id`, `Start_date`, `End_date`, `valid`, `estTime`, `Op_email` AS `email`, `Op_phone` AS `phone`, `last_contact`
+            FROM wait_queue WQ LEFT JOIN operator_info OI ON WQ.Operator = OI.Op_id
             WHERE `Q_id` = $q_id
             LIMIT 1;
         ")){
@@ -30,6 +33,18 @@ class Wait_queue {
             $this->setStartTime($row['Start_date']);
             $this->setEndTime($row['End_date']);
             $this->setValid($row['valid']);
+            
+            if (isset($row['phone'])) 
+                $this->setPhone($row['phone']); 
+            else $this->setPhone(NULL);
+
+            if (isset($row['email'])) 
+                $this->setEmail($row['email']);
+            else $this->setEmail(NULL);
+            
+            if (isset($row['last_contact'])) 
+                $this->setLastContact($row['last_contact']);
+            else $this->setLastContact(NULL);
         }
         
     }
@@ -347,6 +362,7 @@ class Wait_queue {
     //Probaby needs to be a class
     public static function sendNotification($phone, $email, $subject, $message, $headers) {
         global $mysqli;
+        $hasbeenContacted = false;
         // This function needs to query the carrier table and send an email to all combinations
         /*if(mail("".$phone."@tmomail.net", $subject, $message, $headers))
             echo "Email sent";
@@ -361,6 +377,7 @@ class Wait_queue {
                     list($a, $b) = explode('number', $row['email']);
                     mail("".$phone."".$b."", $subject, $message, $headers);
                 }
+                $hasbeenContacted = true;
             } else {
                 echo("Carrier query failed!");
             }
@@ -368,6 +385,11 @@ class Wait_queue {
         
         if(!empty($email)) {
             mail("".$email."", $subject, $message, $headers);
+            $hasbeenContacted = true;
+        }
+
+        if ($hasbeenContacted == true){
+            
         }
     }
 
@@ -411,6 +433,30 @@ class Wait_queue {
         $this->operator = $op;
     }
 
+    public function setPhone($phone) {
+        $this->phone_num = $phone;
+    }
+
+    public function setEmail($email) {
+        $this->email = $email;
+    }
+
+    public function setLastContact($lastContact) {
+        $this->last_contacted = $lastContact;
+    }
+
+    public function getPhone() {
+        return $this->phone_num;
+    }
+
+    public function getEmail() {
+        return $this->email;
+    }
+
+    public function getLastContacted() {
+        return $this->last_contacted;
+    }
+
     public function getOperator() {
         return $this->operator;
     }
@@ -418,6 +464,11 @@ class Wait_queue {
     public function getQ_ID() {
         return $this->q_id;
     }
+
+    public function getContactInfo() {
+        return array($this->getPhone(), $this->getEmail(), $this->getLastContacted());
+    }
+    
 
 }
 ?>
