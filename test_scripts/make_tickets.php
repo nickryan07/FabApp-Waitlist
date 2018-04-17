@@ -15,13 +15,7 @@ $device_group = $dg_id;
 global $mysqli;
 
 
-
-// Make as many transaction tickets for the device group as possible
-
-
-
-
-    // Make as many wait tickets for the device groups as they can 
+// Make as many wait tickets for the device groups as they can 
 if ($result = $mysqli->query("
     SELECT `devices`.`d_id`,`devices`.`dg_id`
     FROM `devices` JOIN `device_group` ON `devices`.`dg_id` = `device_group`.`dg_id`
