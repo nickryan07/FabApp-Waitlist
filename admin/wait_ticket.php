@@ -29,7 +29,7 @@ if (!$staff || $staff->getRoleID() < 7){
                         <i class="fas fa-ticket-alt" aria-hidden="true"></i> Create New Wait Ticket
                     </div>
                     <div class="panel-body">
-                        <table class="table table-bordered table-striped table-hover"><form name="tcForm" id="tcForm" autocomplete="off" method="POST" action="">
+                        <table class="table table-bordered table-striped table-hover"><form name="wqform" id="wqform" autocomplete="off" method="POST" action="">
                             <tr>
                                 <td><a href="#" data-toggle="tooltip" data-placement="top" title="Which device does this wait ticket belong to?">Select Device or Group</a></td>
                                 <td>
@@ -68,7 +68,7 @@ if (!$staff || $staff->getRoleID() < 7){
                             </tr>
                             <tr>
                                 <td><a href="#" data-toggle="tooltip" data-placement="top" title="The email of the person that you will issue a wait ticket for">(Optional) Email</a></td>
-                                <td><input type="text" name="op-email" id="op-email" class="form-control" placeholder="email" maxlength="100" size="10"/></td>
+                                <td><input type="text" name="op-email" id="op-email" class="form-control" placeholder="email address" maxlength="100" size="10"/></td>
                             </tr>
                             <tr>
                                 <td><a href="#" data-toggle="tooltip" data-placement="top" title="The phone number of person that you will issue a wait ticket for">(Optional) Phone</a></td>
@@ -128,7 +128,8 @@ if (!$staff || $staff->getRoleID() < 7){
                                     <td colspan="2"><div class="pull-right"><input type="submit" name="submitBtn" value="Submit"></div></td>
                                 </tr>
                             </tfoot>
-                        </form></table>
+                        </form>
+                        </table>
                     </div>
                     <!-- /.panel-body -->
                 </div>

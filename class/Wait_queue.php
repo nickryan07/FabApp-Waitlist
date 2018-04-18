@@ -93,7 +93,7 @@ class Wait_queue {
                 VALUES
                     ('$operator','$d_id', CURRENT_TIMESTAMP);
             ")){        
-                self::sendNotification($operator, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", 'From: Fabapp Notifications' . "\r\n" .'');
+                Notifications::sendNotification($operator, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", 'From: Fabapp Notifications' . "\r\n" .'');
                 Wait_queue::calculateWaitTimes();
                 echo ("\nSuccessfully updated contact info!");
                 return $mysqli->insert_id;
@@ -121,7 +121,7 @@ class Wait_queue {
                 VALUES
                     ('$operator','$dg_id', CURRENT_TIMESTAMP);
                 ")){
-                    self::sendNotification($operator, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", 'From: Fabapp Notifications' . "\r\n" .'');
+                    Notifications::sendNotification($operator, "Fabapp Notification", "You have signed up for fabapp notifications. Your ticket number is: ".$mysqli->insert_id."", 'From: Fabapp Notifications' . "\r\n" .'');
                     Wait_queue::calculateWaitTimes();
                     echo ("\nSuccessfully updated contact info!");
                     return $mysqli->insert_id;
@@ -185,7 +185,7 @@ class Wait_queue {
             $row = $result->fetch_assoc();
             if (isset($row['Op_phone'])) {
                 // Send a notification that they have canceled their wait queue ticket
-                self::sendNotification($row['Op_id'], "Fabapp Notification", "Your Wait Ticket has been cancelled", 'From: Fabapp Notifications' . "\r\n" .'');
+                Notifications::sendNotification($row['Op_id'], "Fabapp Notification", "Your Wait Ticket has been cancelled", 'From: Fabapp Notifications' . "\r\n" .'');
             }                 
         }
         else {
@@ -457,60 +457,6 @@ class Wait_queue {
         } else {
             echo ("Error updating contact info!");
             return $mysqli->error;
-        }
-    }
-    
-    
-    //Probaby needs to be a class
-    public static function sendNotification($operator, $subject, $message, $headers) {
-        global $mysqli;
-        $hasbeenContacted = false;
-        // This function needs to query the carrier table and send an email to all combinations
-        /*if(mail("".$phone."@tmomail.net", $subject, $message, $headers))
-            echo "Email sent";
-        else
-            echo "Email sending failed";*/
-
-            //Query the phone number and email
-        if ($result = $mysqli->query("
-            SELECT `Op_phone` AS `Phone`, `Op_email` AS `Email`
-            FROM `operator_info`
-            WHERE `Op_id` = $operator
-        ")) 
-        {
-            $row = $result->fetch_assoc();
-            $phone = $row['Phone'];
-            $email = $row['Email'];
-
-            if (!empty($phone)) {
-                if ($result = $mysqli->query("
-                    SELECT email
-                    FROM carrier
-                ")) {
-                    while ($row = $result->fetch_assoc()) {
-                        list($a, $b) = explode('number', $row['email']);
-                        mail("".$phone."".$b."", $subject, $message, $headers);
-                    }
-                    $hasbeenContacted = true;
-                } else {
-                    echo("Carrier query failed!");
-                }
-            }
-            
-            if (!empty($email)) {
-                mail("".$email."", $subject, $message, $headers);
-                $hasbeenContacted = true;
-            }
-    
-            if ($hasbeenContacted == true) {
-                // Update the database to display that the student has been contacted
-                if ($result = $mysqli->query("
-                    UPDATE `operator_info`
-                    SET `last_contact` = CURRENT_TIMESTAMP
-                    WHERE `Op_id` = $operator
-                ")) {
-                }
-            }
         }
     }
 
