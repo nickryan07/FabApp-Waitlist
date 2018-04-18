@@ -260,16 +260,11 @@ $_SESSION['type'] = "home";
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                         <div class="row">
-                        <div class="col-lg-4">
-                        <label>Equipment: </label>
-                        <div class="col-lg-13">
-                            <label>MavID: </label>
-                        </div>
-                            
-                        </div>
-                                <tr>
-                            <form name="Form" id="Form" autocomplete="off" method="post" action="">
-                                <select name="d_id" id="d_id" onchange="selectDevice(this)" tabindex="1">
+                                <div class="col-lg-3">
+                                <center><label>Equipment: </label></center>
+                                </div>
+                                <div class="col-lg-9">
+                                <select class="form-control" name="d_id" id="d_id" onchange="selectDevice(this)" tabindex="1">
                                     <option disabled hidden selected value="">Device</option>
                                     <?php if($result = $mysqli->query("
                                         SELECT d_id, device_desc
@@ -283,12 +278,15 @@ $_SESSION['type'] = "home";
                                         echo ("Device list Error - SQL ERROR");
                                     }?>
                                 </select> 
-                                </form>
-                                </tr>
+                                </div>
+                            </div>
 
-
-                                <tr>
-                                    <select name="Operator" id="Operator" onchange="" tabindex="1">
+                        <div class="row">
+                                <div class="col-lg-3">
+                                <center><label>MavID: </label></center>
+                                </div>
+                                <div class="col-lg-9">
+                                    <select class="form-control" name="Operator" id="Operator" onchange="" tabindex="1">
                                         <option disabled hidden selected value="">MavID</option>
                                         <?php if($result = $mysqli->query("
                                             SELECT `Operator`, `Q_id`
@@ -303,12 +301,12 @@ $_SESSION['type'] = "home";
                                             echo ("Device list Error - SQL ERROR");
                                         }?>
                                     </select>
-                                </tr>
-                        </div>
+                                </div>
+                            </div>
                         
     
                             
-                            <button type="button" id="addBtn" onclick="newTicket()">Create Ticket</button>
+                            <button class="btn btn-primary" type="button" id="addBtn" onclick="newTicket()">Create Ticket</button>
                             
                     
 
@@ -562,7 +560,7 @@ $_SESSION['type'] = "home";
  <script type="text/javascript">
 
     var device = "";
-
+     
     function newTicket(){
         if (device  != ""){
             var dest = "/pages/create.php?";
@@ -577,7 +575,28 @@ $_SESSION['type'] = "home";
          
     
     function selectDevice(element){
-
+        if (element == "") {
+            document.getElementById("d_id").selectedIndex = 0;
+        } else { 
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+            
+        device = element.id + "=" + element.value;
+            
+        /*xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("txtHint").innerHTML = this.responseText;
+            }
+        };
+        device = element.id + "=" + element.value;
+        xmlhttp.open("GET","sub/certD_ID.php?"+device,true);
+        xmlhttp.send();*/
+    }
     }   
      
      
