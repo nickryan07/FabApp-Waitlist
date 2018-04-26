@@ -201,6 +201,102 @@ class Wait_queue {
         Wait_queue::calculateWaitTimes();
     }
 
+    public static function transferFromWaitQueue($operator, $d_id)
+    {
+        global $mysqli;
+
+        //if id && d_id are in wait_queue table
+        //elseif id &&dg_id are in wait_queue table
+        if ($result = $mysqli->query("
+                SELECT `Q_id`
+                FROM `wait_queue`
+                WHERE `Operator` = '$operator' AND `valid` = 'Y' AND `Dev_id` = '$d_id';
+        ")){
+            if($result->num_rows == 1) {
+                $row = $result->fetch_assoc();
+                $q_id = $row['Q_id'];
+            } else if($result->num_rows == 0) {
+                // The operator + d_id combination does not exist, lets try to get the device group number and check if that combination is present in wait queue
+                // First, get the dg_id associated with the device
+                if ($result = $mysqli->query("
+                        SELECT `dg_id`
+                        FROM `devices`
+                        WHERE `d_id` = '$d_id';
+                ")){
+                    // fetch and store dg-id
+                    $row = $result->fetch_assoc();
+                    $dg_id = $row['dg_id'];
+                    // check if the user has a valid wait ticket for that device group
+                    if ($result = $mysqli->query("
+                            SELECT `Q_id`
+                            FROM `wait_queue`
+                            WHERE `Operator` = '$operator' AND `valid` = 'Y' AND `Devgr_id` = '$dg_id';
+                    ")){
+                        if($result->num_rows == 1) {
+                            $row = $result->fetch_assoc();
+                            $q_id = $row['Q_id'];
+                        } else {
+                            // echo ("<script type='text/javascript'>alert('uhhh 1');</script>");
+                            return;
+                        }
+                    } else {
+                        return $mysqli->error;
+                    }
+                } else {
+                    return $mysqli->error;
+                }
+            } else {
+                // echo ("<script type='text/javascript'>alert('uhhh 2');</script>");
+                return;
+            }
+        } else {
+            return $mysqli->error;
+        }
+
+        if ($mysqli->query("
+            UPDATE `wait_queue`
+            SET `valid` = 'N'
+            WHERE `Q_id` = $q_id;
+        ")) {
+            echo("\nSuccessfully changed valid bit to 'N'!");
+        } else {
+            return $mysqli->error;
+        }
+        
+        // Get the email or phone number of the student to send them a confirmation notification
+        if ($result = $mysqli->query("
+            SELECT *
+            FROM `operator_info`
+            WHERE `op_id` = $operator
+            LIMIT 1;
+        ")) {
+            $row = $result->fetch_assoc();
+            if (isset($row['Op_phone'])) {
+                // Send a notification that they have canceled their wait queue ticket
+                Notifications::sendNotification($row['Op_id'], "Fabapp Notification", "Your Wait Ticket has been completed.", 'From: Fabapp Notifications' . "\r\n" .'');
+            }                 
+        }
+        else {
+            echo ("Could not retrieve phone number of customer ID #$operator");
+        }
+    
+        // If they are not waiting for any other jobs, then delete their contact information
+        if (!Wait_queue::isOperatorWaiting($operator)) {
+            Wait_queue::deleteContactInfo($operator);
+        }
+
+        // Calculate new wait times based off a person leaving the wait queue
+        Wait_queue::calculateWaitTimes();
+    }
+
+    function debug_to_console( $data ) {
+        $output = $data;
+        if ( is_array( $output ) )
+            $output = implode( ',', $output);
+    
+        echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
+    }
+    
     public static function deleteContactInfo($operator)
     {
         global $mysqli;
