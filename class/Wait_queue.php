@@ -236,7 +236,6 @@ class Wait_queue {
                             $row = $result->fetch_assoc();
                             $q_id = $row['Q_id'];
                         } else {
-                            // echo ("<script type='text/javascript'>alert('uhhh 1');</script>");
                             return;
                         }
                     } else {
@@ -246,7 +245,6 @@ class Wait_queue {
                     return $mysqli->error;
                 }
             } else {
-                // echo ("<script type='text/javascript'>alert('uhhh 2');</script>");
                 return;
             }
         } else {
@@ -289,14 +287,6 @@ class Wait_queue {
         Wait_queue::calculateWaitTimes();
     }
 
-    function debug_to_console( $data ) {
-        $output = $data;
-        if ( is_array( $output ) )
-            $output = implode( ',', $output);
-    
-        echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
-    }
-    
     public static function deleteContactInfo($operator)
     {
         global $mysqli;
