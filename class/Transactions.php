@@ -153,6 +153,8 @@ class Transactions {
         if (!Purpose::regexID($p_id)) return "Invalid Purpose";
         if (!Status::regexID($status_id)) return "Invalid Status";
         
+        Wait_queue::transferFromWaitQueue($operator->getOperator(), $d_id);
+        
         if ($mysqli->query("
             INSERT INTO transactions 
               (`operator`,`d_id`,`t_start`,`status_id`,`p_id`,`est_time`,`staff_id`) 

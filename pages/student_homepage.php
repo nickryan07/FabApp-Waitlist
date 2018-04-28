@@ -17,12 +17,20 @@ if (isset($_GET["operator"])){
             ORDER BY t_start DESC
             Limit 1
         ")){
-            if( $result->num_rows > 0){
-                $row = $result->fetch_assoc();
-                $ticket = new Transactions($row['trans_id']);
-            } else {
-                $errorMsg = "No Transactions Found for ID# $operator";
+            if($resultWait = $mysqli->query("
+                SELECT Q_id
+                FROM wait_queue
+                WHERE wait_queue.`Operator` = '$operator'
+                Limit 1
+            ")){
+                if( $result->num_rows > 0 || $resultWait->num_rows > 0 ) {
+                    // $row = $result->fetch_assoc();
+                    // $ticket = new Transactions($row['trans_id']);
+                } else {
+                    $errorMsg = "No Transactions or wait tickets Found for ID# $operator";
+                }
             }
+            
         } else {
             $message = "Error - ID LookUp";
         }
@@ -73,7 +81,7 @@ if ($errorMsg != ""){
                                     <label><i class="fa fa-info-circle"></i> Disclaimer</label>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" name="disclaimer" value="">I have read and understand the <a>FERPA release policies</a>.
+                                            <input type="checkbox" name="disclaimer" value="">I have read and understand the <a href="http://fablab.uta.edu/policy" target="_blank">Fablab Wait Policies</a>.
                                         </label>
                                     </div>
                                 </div>
@@ -109,9 +117,9 @@ if ($errorMsg != ""){
                             WHERE public_view = 'Y'
                             ORDER BY dg_id, `device_desc`
                         ")){
-                            while ( $panel = $result->fetch_assoc() ){ ?>
-                    <?php if($panel["t_start"]) {
-                                        $ticket = new Transactions($panel['trans_id']); ?>
+                        while ( $panel = $result->fetch_assoc() ){ ?>
+                    <?php   if($panel["t_start"]) {
+                                $ticket = new Transactions($panel['trans_id']); ?>
                     <div class="col-lg-4">
                         <div class="panel panel-warning">
                             <div class="panel-heading">
@@ -165,19 +173,156 @@ if ($errorMsg != ""){
                                             </div>
                                         </div>
                                     </div>
-                                    
                                 </div>
-                                <!--div class="col-lg-12" style="text-align: center">
-                                                <button type="submit" class="btn btn-danger">Cancel</button>
-                                            </div-->
                             </div>
                             <div class="panel-footer">
 
                             </div>
                         </div>
                     </div>
-                    <?php }
-                                                                     }
+                    <?php       }
+                            }
+                        } ?>
+                        <!-- ####### Wait Tickets ####### -->
+                        <?php if ($result = $mysqli->query("
+                            SELECT Q_id, estTime, Start_date, Dev_id, Devgr_id
+                            FROM wait_queue
+                            WHERE `Operator` = '$operator' AND `valid` = 'Y' AND `Devgr_id` IS NULL;
+                        ")){
+                        while ( $panel = $result->fetch_assoc() ){ ?>
+                    <?php   if($panel["Start_date"]) {
+                                $device = new Devices($panel['Dev_id']); ?>
+                    <div class="col-lg-4">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <i class="fas fa-ticket-alt fa-spin fa-fw"></i>
+                                <span class="sr-only">Loading...</span> Wait Ticket -
+                                <?php echo $device->getDevice_desc(); ?>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-lg-4">
+                                    <div id="job-info" style="margin-left: 25px;">
+                                        <h6>
+                                            Number
+                                        </h6>
+                                        <h3>
+                                            #
+                                            <?php echo ("$panel[Q_id]"); ?>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div style="margin-top: 15px">
+                                        <p>
+                                            <strong>Est. Wait:</strong>
+                                            <span class="pull-right text-muted">
+                                                        <?php //echo("<div>".date( 'M d g:i a',strtotime($panel["Start_date"]) )."</div>" );
+                                                            if (isset($panel["estTime"])) {
+                                                                echo("<div id=\"est".$panel["Q_id"]."\">".$panel["estTime"]." </div>" );
+                                                                $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $panel["est_time"]);
+                                                                sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                                $time_seconds = $hours * 3600 + $minutes * 60 + $seconds- (time() - strtotime($panel["Start_date"]) ) + $sv["grace_period"];
+                                                                array_push($job_array, array($panel["Q_id"], $time_seconds, $device->getDg()));
+                                                            } else 
+                                                                echo("<div align=\"center\">No estimated time</div>"); 
+                                                                      ?>
+                                                        </span>
+                                        </p>
+                                        <div class="progress progress-striped active">
+                                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" style="width:
+                                                <?php 
+                                                            // Est Time Percentage = (now - start) / ((now - start) + est) * 100
+                                                            sscanf($panel["estTime"], "%d:%d:%d", $hours, $minutes, $seconds);
+                                                            $time_seconds = isset($seconds) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
+                                                            $percentage = (strtotime("now") - strtotime($panel["Start_date"])) / ((strtotime("now") - strtotime($panel["Start_date"])) + $time_seconds) * 100;
+
+                                                            echo $percentage."%";
+                                                        ?> 
+                                            ">
+                                                <span class="sr-only">55% Complete</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+
+                            </div>
+                        </div>
+                    </div>
+                    <?php       }
+                            }
+                        } ?>
+
+
+                        <?php if ($result = $mysqli->query("
+                            SELECT Q_id, estTime, Start_date, Dev_id, Devgr_id
+                            FROM wait_queue
+                            WHERE `Operator` = '$operator' AND `valid` = 'Y' AND `Dev_id` IS NULL;
+                        ")){
+                        while ( $panel = $result->fetch_assoc() ){ ?>
+                    <?php   if($panel["Start_date"]) { 
+                                $deviceGroup = new DeviceGroup($panel['Devgr_id']);?>
+                    <div class="col-lg-4">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <i class="fas fa-ticket-alt fa-spin fa-fw"></i>
+                                <span class="sr-only">Loading...</span> Wait Ticket -
+                                <?php echo $deviceGroup->getDg_desc(); ?>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-lg-4">
+                                    <div id="job-info" style="margin-left: 25px;">
+                                        <h6>
+                                            Number
+                                        </h6>
+                                        <h3>
+                                            #
+                                            <?php echo ("$panel[Q_id]"); ?>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div style="margin-top: 15px">
+                                        <p>
+                                            <strong>Est. Wait:</strong>
+                                            <span class="pull-right text-muted">
+                                                        <?php //echo("<div>".date( 'M d g:i a',strtotime($panel["Start_date"]) )."</div>" );
+                                                            if (isset($panel["estTime"])) {
+                                                                echo("<div id=\"est".$panel["Q_id"]."\">".$panel["estTime"]." </div>" );
+                                                                $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $panel["estTime"]);
+                                                                sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                                $time_seconds = $hours * 3600 + $minutes * 60 + $seconds- (time() - strtotime($panel["Start_date"]) ) + $sv["grace_period"];
+                                                                array_push($job_array, array($panel["Q_id"], $time_seconds, $deviceGroup->getDg_id()));
+                                                            } else 
+                                                                echo("<div align=\"center\">No estimated time</div>"); 
+                                                                      ?>
+                                                        </span>
+                                        </p>
+                                        <div class="progress progress-striped active">
+                                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" style="width:
+                                                <?php 
+                                                            // Est Time Percentage = (now - start) / ((now - start) + est) * 100
+                                                            sscanf($panel["estTime"], "%d:%d:%d", $hours, $minutes, $seconds);
+                                                            $time_seconds = isset($seconds) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
+                                                            $percentage = (strtotime("now") - strtotime($panel["Start_date"])) / ((strtotime("now") - strtotime($panel["Start_date"])) + $time_seconds) * 100;
+
+                                                            echo $percentage."%";
+                                                        ?> 
+                                            ">
+                                                <span class="sr-only">55% Complete</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+
+                            </div>
+                        </div>
+                    </div>
+                    <?php       }
+                            }
                         } ?>
                 </div>
                 <!-- /.row -->
