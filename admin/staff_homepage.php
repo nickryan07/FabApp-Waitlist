@@ -5,6 +5,7 @@
  */
 include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/header.php');
 $device_array = array();
+$number_of_status_tables = 0;
 
 if ($staff && $staff->getRoleID () < 7) {
     // Not Authorized to see this Page
@@ -31,10 +32,11 @@ if ($staff && $staff->getRoleID () < 7) {
                     <div class="col-lg-12">
                         <h1 class="page-header">Staff Homepage</h1>
                     </div>
-                    <!-- /.col-lg-12 -->
                 </div>
                 <!-- /.row -->
+
                 <div class="row">
+
                     <!-- Wait Queue -->
                     <div class="col-lg-13">
                         <div class="panel panel-default">
@@ -267,15 +269,12 @@ if ($staff && $staff->getRoleID () < 7) {
                             </div>
 
                     </div>
-                <!-- /.col-lg-13 -->
+                </div>
 
-                </div>
-                <!-- /.col-lg-6 -->
-                </div>
-                
-                <!-- /.col-lg-13 -->
-                </div>
-                <div class="col-lg-6">
+
+
+                <!-- Create a Ticket -->
+                <div class="col-lg-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-print fa-fw"></i>Create Ticket
@@ -420,105 +419,308 @@ if ($staff && $staff->getRoleID () < 7) {
                   </div>
                   <!-- /.col-lg-13 -->
 
-                <div class="col-lg-13">
+                </div>
+
+                <!-- Equipment Status -->
+                <div class="col-lg-8">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-ticket fa-fw"></i>Equipment Status
+                            <label>
+                                <i class="fa fa-tasks"></i> Equipment Status
+                            </label>
                         </div>
-                        <!-- /.panel-heading -->
+                        <!-- Tabs -->
                         <div class="panel-body">
-                        <div class="row">
-                        <div class="col-lg-12">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <img class="img-fluid m-2" src="../images/polyprinter.svg" alt="Card image cap" style="max-height:100px;">
-                                </div>
-                                <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/laser.svg" alt="Card image cap" style="max-height:100px;">
-                                </div>
-                                <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/sewing-machine.svg" alt="Card image cap" style="max-height:100px;">
-                                </div>
-                                <div class="col-sm-3">
-                                    <img class="img-fluid" src="../images/uPrint.svg" alt="Card image cap" style="max-height:100px;">
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                            <a href="#" class="btn btn-default btn-block">Manage</a>
-                        </div>
-                        <!-- /.panel-body -->
-                        <div class="panel-footer">
-                        </div>
-                    </div>
-                    <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-13 -->
-                </div>
-                <!-- /.col-lg-6 -->
+                            <ul class="nav nav-tabs">
+                                <!-- Have at least the 'All' tab which will have all devices -->
+                                <li class="active">
+                                    <a href="#all" data-toggle="tab" aria-expanded="false">All</a>
+                                </li>
 
-                <!-- /.row -->
+                                <!-- Load all device groups as a tab that have at least one device in that group -->
+                            <?php 
+                                if ($result = $mysqli->query("
+                                    SELECT dg_id, dg_desc
+                                    FROM device_group
+                                    WHERE device_group.dg_id IN ( 
+                                        SELECT dg_id
+                                        FROM devices
+                                        GROUP BY dg_id
+                                        HAVING COUNT(*) > 1
+                                    )
+                                    ORDER BY dg_id;
+                                ")) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        ?> 
+                                        <li class="">
+                                            <a <?php echo("href=\"#".$row["dg_id"]."\""); ?>  data-toggle="tab" aria-expanded="false"> <?php echo($row["dg_desc"]); ?> </a>
+                                        </li>
+                                        <?php
+                                    }
+                                }
+                            ?> 
+                            </ul>
 
-
-                    <div class="col-lg-6">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <label>
-                                    <i class="fa fa-suitcase"></i> Inventory </label>
-                            </div>
-                            <div class="panel-body">
-                                <table class="table table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <th>Material</th>
-                                            <th><i class="fas fa-paint-brush fa-fw"></i></th>
-                                            <?php if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
-                                        ?>
-                                                    <th>Qty on Hand</th>
-                                            <?php
-                                    } ?>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php //Display Inventory Based on device group
-                                    if ($result = $mysqli->query("
-                                        SELECT `m_name`, SUM(unit_used) as `sum`, `color_hex`, `unit`
-                                        FROM `materials`
-                                        LEFT JOIN `mats_used`
-                                        ON mats_used.m_id = `materials`.`m_id`
-                                        WHERE `m_parent` = 1
-                                        GROUP BY `m_name`, `color_hex`, `unit`
-                                        ORDER BY `m_name` ASC;
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                
+                                <?php
+                                if ($Tabresult = $mysqli->query("
+                                    SELECT dg_id, dg_desc
+                                    FROM device_group
+                                    WHERE device_group.dg_id IN ( 
+                                        SELECT dg_id
+                                        FROM devices
+                                        GROUP BY dg_id
+                                        HAVING COUNT(*) > 1
+                                    )
+                                    ORDER BY dg_id;
                                     ")) {
-                                        while ($row = $result->fetch_assoc()) {
-                                            if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
-                                                ?>
-                                                <tr>
-                                                    <td><?php echo $row['m_name']; ?></td>
-                                                    <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
-                                                    <td><?php echo number_format($row['sum'])." ".$row['unit']; ?></td>
-                                                </tr>
-                                            <?php
-                                            } else {
-                                                ?>
-                                                <tr>
-                                                    <td><?php echo $row['m_name']; ?></td>
-                                                    <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
-                                                </tr>
+                                    $isAllTable = true; // flag used to indicate that this is the 'All' tab
+
+                                    do {
+                                        global $tab;
+                                        
+                                        // Give all of the dynamic tables a name so they can be called when their tab is clicked
+                                        if ($isAllTable) {
+                                            ?> <div class="tab-pane active in" id="all"> <?php
+                                        } else {
+                                            ?> <div class="tab-pane fade" <?php echo("id=\"".$tab["dg_id"]."\"") ?> > <?php
+                                        }                                      
+                                    ?>                        
+                                        <!-- Create the Table Header -->
+                                        <table class="table table-striped table-bordered table-hover" <?php echo("id=\"indexTable_".$number_of_status_tables."\"") ?>>
+                                        <thead>
+                                            <tr class="tablerow">
+                                                <th align="right">Ticket</th>
+                                                <th>Device</th>
+                                                <th>Start Time</th>
+                                                <th>Est Time Left</th>
+                                                <th>Progress </th>
+                                                <?php if ($staff) {
+                                            ?> <th>Action</th><?php
+                                        } ?>
+                                            </tr>
+                                        </thead>
+                                        <?php
+
+                                        // Create the table for the specified tab, if it is the 'All' tab then it will display all of the devices instead of those associated in the device group
+                                        if ($result = $mysqli->query("
+                                            SELECT trans_id, device_desc, t_start, est_time, devices.dg_id, dg_parent, devices.d_id, url, operator, status_id
+                                            FROM devices
+                                            JOIN device_group ON devices.dg_id = device_group.dg_id
+                                            LEFT JOIN (SELECT trans_id, t_start, t_end, est_time, d_id, operator, status_id FROM transactions WHERE status_id < 12 ORDER BY trans_id DESC) as t ON devices.d_id = t.d_id
+                                            WHERE public_view = 'Y'" . (!$isAllTable ? " and devices.dg_id=".$tab["dg_id"] : ""). "
+                                            ORDER BY dg_id, `device_desc`
+                                        ")) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                ?> <tr class="tablerow"> <?php 
+                                                
+                                                // if there is a print for this device
+                                                if ($row["t_start"]) {
+                                                    //create a new transaction based off of the ID which will fill all of the fields of a transaction
+                                                    $ticket = new Transactions($row['trans_id']);
+                                    
+                                                    // Print the Ticket Number?> <td align="right"> <?php
+                                                    echo("<a href=\"pages/lookup.php?trans_id=$row[trans_id]\">$row[trans_id]</a>"); ?> </td>
+
+                                                    <!-- Print the Device Name -->
+                                                    <td>
+                                                        <?php 
+                                                        // Show Devices that have a URL attached to them that will give more information
+                                                        if ($ticket->getDevice()->getUrl() && (preg_match($sv['ip_range_1'], getenv('REMOTE_ADDR')) || preg_match($sv['ip_range_2'], getenv('REMOTE_ADDR')))) {
+                                                            Devices::printDot($staff, $row['d_id'], $ticket->getDevice()->getD_id());
+                                                            //echo ("<a href=\"http://".$row["url"]."\">".$row["device_desc"]."</a>");
+                                                            echo("<a href=\"http://".$ticket->getDevice()->getUrl()."\">".$ticket->getDevice()->getDevice_desc()."</a>");
+                                                        }
+
+                                                    // Show Devices that do not have a URL attached to them
+                                                    else {
+                                                        Devices::printDot($staff, $ticket->getDevice()->getD_id());
+                                                        echo $ticket->getDevice()->getDevice_desc();
+                                                    } ?>
+                                                    </td>
+                                    
+                                                    <!-- Show the Job Start Time --> 
+                                                    <?php 
+                                                    echo("<td>".date('M d g:i a', strtotime($row["t_start"]))."</td>");
+                                    
+                                                    //If the print has completed and the print needs to be moved
+                                                    if ($row["status_id"] == 11) {
+                                                        echo("<td align='center'>".$ticket->getStatus()->getMsg()."</td>"); // Status note for Est. Time
+                                                        echo("<td align=\"center\">-</td>"); // Nothing for the progress bar
+                                                    }
+
+                                                    // If the print is still printing
+                                                    elseif (isset($row["est_time"])) {
+                                                        echo("<td align='center'><div id=\"est".$row["trans_id"]."_".$number_of_status_tables."\">".$row["est_time"]." </div></td>");
+                                                        $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $row["est_time"]);
+                                                        sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                        $time_seconds = $hours * 3600 + $minutes * 60 + $seconds- (time() - strtotime($row["t_start"])) + $sv["grace_period"];
+                                                        array_push($device_array, array($row["trans_id"]."_".$number_of_status_tables, $time_seconds, $row["dg_parent"])); ?>
+                                                            <td> <div class="progress active">
+                                                            <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                                                            style="width:
+                                                        <?php 
+                                                        
+                                                        // Est Time Percentage = (now - start) / ((now - start) + est) * 100
+                                                        // if the estimated time is greater than the current time then display a progress bar, else show 100%
+                                                        if ($time_seconds > 0) {
+                                                            $percentage = (1 - ($time_seconds / ((strtotime("now") - strtotime($row["t_start"])) + $time_seconds))) * 100;
+                                                        } else {
+                                                            $percentage = 100;
+                                                        }
+                                                    
+                                                        echo $percentage."%"; ?> 
+                                                    "/> </div> </td>
+                                                    <?php
+                                                    }
+
+                                                    // There is no job printing for this device
+                                                    else {
+                                                        echo("<td align=\"center\">-</td>"); // Nothing for the Est Time Left
+                                                    echo("<td align=\"center\">-</td>"); // Nothing for the progress bar
+                                                    }
+                                        
+                                                    // Actions for Staff Members
+                                                    if ($staff && ($staff->getRoleID() >= $sv['LvlOfStaff'] || $staff->getOperator() == $ticket->getUser()->getOperator())) {
+                                                        ?>
+                                                    <td align="center">
+                                                        <button onclick="endTicket(<?php echo $row["trans_id"].",'".$row["device_desc"]."'"; ?>)">End Ticket</button>
+                                                    </td>
+                                                <?php
+                                                    } elseif ($staff) {
+                                                        echo("<td align='center'></td>");
+                                                    }
+                                                }
+
+                                                // If there is no print for the device
+                                                else {
+                                                    ?>
+                                                <td align="right"></td>
+                                                <td>
+                                            <?php 
+
+                                                // Show Devices that have a URL attached to them that will give more information
+                                                if ($row['url'] && (preg_match($sv['ip_range_1'], getenv('REMOTE_ADDR')) || preg_match($sv['ip_range_2'], getenv('REMOTE_ADDR')))) {
+                                                    Devices::printDot($staff, $row['d_id']);
+                                                    echo("<a href=\"http://".$row["url"]."\">".$row["device_desc"]."</a>");
+                                                }
+
+                                                    // Show Devices that do not have a URL attached to them
+                                                    else {
+                                                        Devices::printDot($staff, $row['d_id']);
+                                                        echo $row['device_desc'];
+                                                    } ?>
+                                            </td>
+
+                                            <!-- Show that there is NO Start Time -->
+                                            <td align="center"> - </td>
+
+                                            <!-- Show that there is NO End Time -->
+                                            <td align="center"> - </td>
+
+                                            <!-- Show that there is NO End Time Progress Bar -->
+                                            <td align="center"> - </td>
+                                    
+                                            <!-- Allow a staff member to create a new ticket -->
+                                            <?php 
+                                            if ($row["url"] && $staff) {
+                                                if ($staff->getRoleID() > 6) {
+                                                    ?>
+                                                    <td  align="center"><?php echo("<a href=\"http://".$row["url"]."\">New Ticket</a>"); ?></td>
+                                                    <?php
+                                                } else {
+                                                    echo("<td align=\"center\">-</td>");
+                                                }
+                                            } elseif ($staff) {
+                                                if ($staff->getRoleID() > 6) {
+                                                    ?>
+                                                    <td align="center"><div id="est"><a href="\pages\create.php?<?php echo("d_id=".$row["d_id"])?>">New Ticket</a></div></td>
+                                                    <?php
+                                                } else {
+                                                    echo("<td align=\"center\">-</td>");
+                                                }
+                                            }
+                                                } ?>
+                                            </tr>
                                             <?php
                                             }
-                                        }
-                                    } else {
-                                        ?>
-                                        <tr><td colspan="3">None</td></tr>
-                                    <?php
-                                    } ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        } ?>
+                                    </table>
+                                </div>
+                                <?php
+
+                                $isAllTable = false;
+                                $number_of_status_tables++;
+                            } while ($tab = $Tabresult->fetch_assoc());
+                        }
+                        ?>
+                        </div>
                         </div>
                     </div>
-                
+                </div>
+
+                <!-- Materials -->
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <label>
+                                <i class="fa fa-suitcase"></i> Inventory </label>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th><i class="fas fa-paint-brush fa-fw"></i></th>
+                                        <?php if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
+                                    ?>
+                                                <th>Qty on Hand</th>
+                                        <?php
+                                } ?>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php //Display Inventory Based on device group
+                                if ($result = $mysqli->query("
+                                    SELECT `m_name`, SUM(unit_used) as `sum`, `color_hex`, `unit`
+                                    FROM `materials`
+                                    LEFT JOIN `mats_used`
+                                    ON mats_used.m_id = `materials`.`m_id`
+                                    WHERE `m_parent` = 1
+                                    GROUP BY `m_name`, `color_hex`, `unit`
+                                    ORDER BY `m_name` ASC;
+                                ")) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $row['m_name']; ?></td>
+                                                <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
+                                                <td><?php echo number_format($row['sum'])." ".$row['unit']; ?></td>
+                                            </tr>
+                                        <?php
+                                        } else {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $row['m_name']; ?></td>
+                                                <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
+                                            </tr>
+                                        <?php
+                                        }
+                                    }
+                                } else {
+                                    ?>
+                                    <tr><td colspan="3">None</td></tr>
+                                <?php
+                                } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <!-- /.container-fluid -->
         </div>
@@ -643,6 +845,12 @@ if ($staff && $staff->getRoleID () < 7) {
         "iDisplayLength": 25,
         "order": []
     });
+
+    
+    $("#indexTable_0").DataTable({
+            "iDisplayLength": 25,
+            "order": []
+            });   
 </script>    
     
 </body>
