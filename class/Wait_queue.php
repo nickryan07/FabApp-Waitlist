@@ -565,13 +565,13 @@ class Wait_queue {
         }
 
         //Validate input variables
-		if (!self::regexPhone($op_phone)) {
+		if (!self::regexPhone($op_phone) &&  && !empty($op_phone)) {
             echo ("Bad phone number - ");
             echo $op_phone;
             return "Bad phone number";
         }
 		
-		if(!filter_var($op_email, FILTER_VALIDATE_EMAIL)) {
+		if(!filter_var($op_email, FILTER_VALIDATE_EMAIL)  && !empty($op_mail)) {
             echo ("Bad email");
 			return "Bad email";
         }
