@@ -8,14 +8,6 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/api/gatekeeper.php');
 $time = $errorMsg = "";
 $error = false;
 
-// Check if a Device Group or a Device is provided
-if (empty($_GET["d_id"]) && empty($_GET["dg_id"]))
-{
-    $errorMsg = "Device ID or Device Group ID is Missing";
-    $error = true;
-}
-
-// Check if it is a Device ID
 if (!empty($_GET["d_id"])){
     $d_id = filter_input(INPUT_GET,'d_id');
     if (!Devices::regexDID($d_id)) {
@@ -32,17 +24,10 @@ if (!empty($_GET["d_id"])){
     }
 }
 
-// Check if it is a Device Group
-if (!empty($_GET["dg_id"])) {
-    $dg_id = filter_input(INPUT_GET, 'dg_id');
-    if (!DeviceGroup::regexDgID($dg_id)) {
-        $errorMsg = "Bad Device Group ID";
-        $error = true;
-    } else {
-        $device_group = new DeviceGroup($dg_id);
-        
-    }
+if (!empty($_GET["operator"])) {
+    $operator = Users::withID($_GET['operator']);
 }
+
 
 //When the user hits Submit
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ticketBtn'])) {
