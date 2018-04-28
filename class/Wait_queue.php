@@ -478,31 +478,31 @@ class Wait_queue {
                         ORDER BY Q_id;
                     ")) {
                         
-                        // For each device waiting in this device group
+                        // For each person waiting in this device
                         $count = 0;
                         while ($row2 = $result2->fetch_assoc())
                         {
-                            // If their wait number is smaller than the number of devices in this device group then give them an estimated time
+                            // If they are the first person waiting, then assign them an estimated wait time
                             if ($count < 1) {
-                                $rhours = floor($estTimes[$count] / 3600);
-                                $rmins = floor($estTimes[$count] / 60 % 60);
-                                $rsecs = floor($estTimes[$count] % 60);
+                                $rhours = floor($estTimes / 3600);
+                                $rmins = floor($estTimes / 60 % 60);
+                                $rsecs = floor($estTimes % 60);
                                 $timeFormat = sprintf('%02d:%02d:%02d', $rhours, $rmins, $rsecs);
 
                                 if ($result3 = $mysqli->query("
                                     UPDATE wait_queue
                                     SET estTime = '$timeFormat'
                                     WHERE Q_id = ".$row2['Q_id']."
-                                "));
+                                ")) { }
                             }
 
-                            // If their wait number is greater than the number of devices in this device group then do not estimate their time
+                            // If they are NOT the first person waiting, then do not give them an estimated wait time
                             else {
                                 if ($result3 = $mysqli->query("
-                                    UPDATE wait_queue
-                                    SET estTime = NULL
-                                    WHERE Q_id = ".$row2['Q_id']."
-                                "));
+                                    UPDATE `wait_queue`
+                                    SET `estTime` = NULL
+                                    WHERE `Q_id` = ".$row2['Q_id']."
+                                ")) { }
                             }
 
                             $count++;

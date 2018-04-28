@@ -35,23 +35,25 @@ $device_array = array();
                     <div class="col-lg-13">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <i class="fa fa-ticket fa-fw"></i>Currently Waiting Users
+                                <i class="fa fa-ticket fa-fw"></i>Wait Queue
+
+                                <input type="button" class="btn btn-sm btn-primary pull-right" value="New Wait Ticket" onclick="location.href = '/admin/wait_ticket.php'">
+
                             </div>
                             <!-- /.panel-heading -->
                             <div class="panel-body">
                                 <div class="table-responsive">
-                                <ul class="nav nav-tabs">
-                                        <!-- Have at least the 'All' tab which will have all devices -->
-                                        <li class="active">
-                                            <a href="#device_group_tab" data-toggle="tab" aria-expanded="false">Device Groups</a>
-                                        </li>
-                                        <li class="">
-                                            <a href="#device_tab" data-toggle="tab" aria-expanded="false">Devices</a>
-                                        </li>
-                                </ul>
-
+                                    <ul class="nav nav-tabs">
+                                            <!-- Have at least the 'All' tab which will have all devices -->
+                                            <li class="">
+                                                <a href="#device_group_tab" data-toggle="tab" aria-expanded="false">Device Groups</a>
+                                            </li>
+                                            <li class="active">
+                                                <a href="#device_tab" data-toggle="tab" aria-expanded="false">Devices</a>
+                                            </li>
+                                    </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane fade active in" id="device_group_tab">
+                                    <div class="tab-pane fade in" id="device_group_tab">
                                         <table id="Device_Group_Table" class="table table-striped table-bordered table-hover">
                                             <thead>
                                                 <tr align="center">
@@ -61,7 +63,6 @@ $device_array = array();
                                                     <th><i class="far fa-clock"></i> Time Left</th>
                                                     <th><i class="far fa-flag"></i> Alerts</th>
                                                     <th><i class="fa fa-times"></i> Remove</th>
-                                                    <th><i class="fa fa-print fa-fw"></i> Start Ticket</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -87,11 +88,12 @@ $device_array = array();
                                                             <td>
                                                             <?php $user = Users::withID($row['Operator']);?>
                                                                 <i class="<?php echo $user->getIcon()?> fa-lg" title="<?php echo($row['Operator']) ?>"></i>
-                                                                <?php if (isset($row['Op_phone'])) { ?> <i class="fas fa-mobile"   title="<?php echo ($row['Op_phone']) ?>"></i> <?php } ?>
-                                                                <?php if (isset($row['Op_email'])) { ?> <i class="fas fa-envelope" title="<?php echo ($row['Op_email']) ?>"></i> <?php } ?>
+                                                                <?php if (!empty($row['Op_phone'])) { ?> <i class="fas fa-mobile"   title="<?php echo ($row['Op_phone']) ?>"></i> <?php } ?>
+                                                                <?php if (!empty($row['Op_email'])) { ?> <i class="fas fa-envelope" title="<?php echo ($row['Op_email']) ?>"></i> <?php } ?>
                                                             </td>
                                                             <!-- Device Group -->
                                                             <td align="center"><?php echo($row['dg_desc']) ?></td>
+
                                                             <!-- Start Time, Estimated Time, Last Contact Time -->
                                                             <td>
                                                                 <!-- Start Time -->
@@ -118,7 +120,7 @@ $device_array = array();
                                                             <!-- Send an Alert -->
                                                             <td> 
                                                                 <?php 
-                                                                if (isset($row['Op_phone']) || isset($row['Op_email'])) {
+                                                                if (!empty($row['Op_phone']) || !empty($row['Op_email'])) {
                                                                     ?> 
                                                                     <div style="text-align: center">
                                                                         <button class="btn btn-xs btn-primary" data-target="#removeModal" data-toggle="modal" 
@@ -139,17 +141,6 @@ $device_array = array();
                                                                     </button>
                                                                 </div>
                                                             </td>
-
-                                                            
-                                                            <!-- Start Ticket -->
-                                                            <td> 
-                                                                <div style="text-align: center">
-                                                                    <button class="btn btn-primary btn-xs" data-target="#removeModal" data-toggle="modal" 
-                                                                            onclick="startTicket(undefined, <?php echo $row["Devgr_id"] ?>, <?php echo $row["Operator"] ?>)">
-                                                                            Start
-                                                                    </button>
-                                                                </div>
-                                                            </td>
                                                         </tr>
                                                         <?php
                                                     }
@@ -159,7 +150,8 @@ $device_array = array();
                                         </table>
                                     </div>
 
-                                    <div class="tab-pane fade in" id="device_tab">
+                                    <!-- Device Wait Queue -->
+                                    <div class="tab-pane fade active in" id="device_tab">
                                     <table id="Device_Table" class="table table-striped table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -167,7 +159,6 @@ $device_array = array();
                                                 <th><i class="far fa-user"></i> MavID</th>
                                                 <th><i class="fa fa-th-large"></i> Device</th>
                                                 <th><i class="far fa-clock"></i> Time Left</th>
-                                                <th><i class="far fa-clock"></i> Start Ticket</th>
                                                 <th><i class="far fa-flag"></i> Alerts</th>
                                                 <th><i class="fa fa-times"></i> Remove</th>
                                             </tr>
@@ -192,10 +183,12 @@ $device_array = array();
                                                         <td align="center"><?php echo($counter++) ?></td>
                                                         <!-- Operator ID --> 
                                                         <td>
-                                                            <i class="fab fa-grav fa-spin fa-lg" title="<?php echo($row['Operator']) ?>"></i>
-                                                            <?php if (isset($row['Op_phone'])) { ?> <i class="fas fa-mobile"   title="<?php echo ($row['Op_phone']) ?>"></i> <?php } ?>
-                                                            <?php if (isset($row['Op_email'])) { ?> <i class="fas fa-envelope" title="<?php echo ($row['Op_email']) ?>"></i> <?php } ?>
+                                                            <?php $user = Users::withID($row['Operator']);?>
+                                                            <i class="<?php echo $user->getIcon()?> fa-lg" title="<?php echo($row['Operator']) ?>"></i>
+                                                            <?php if (!empty($row['Op_phone'])) { ?> <i class="fas fa-mobile"   title="<?php echo ($row['Op_phone']) ?>"></i> <?php } ?>
+                                                            <?php if (!empty($row['Op_email'])) { ?> <i class="fas fa-envelope" title="<?php echo ($row['Op_email']) ?>"></i> <?php } ?>
                                                         </td>
+
                                                         <!-- Device Name -->
                                                         <td align="center"><?php echo($row['device_desc']) ?></td>
 
@@ -222,21 +215,10 @@ $device_array = array();
                                                             } ?>
                                                         </td>
 
-                                                        <!-- Start Ticket -->
-                                                        <td> 
-                                                            <div style="text-align: center">
-                                                                <button class="btn btn-primary" data-target="#removeModal" data-toggle="modal" 
-                                                                        onclick="removeFromWaitlist(<?php echo $row["Q_id"].", ".$row["Operator"].", ".$row['device_id'].", undefined" ?>)">
-                                                                        <i class="glyphicon glyphicon-remove"></i>
-                                                                        Start
-                                                                </button>
-                                                            </div>
-                                                        </td>
-
                                                         <!-- Send an Alert -->
                                                         <td> 
                                                             <?php 
-                                                            if (isset($row['Op_phone']) || isset($row['Op_email'])) {
+                                                            if (!empty($row['Op_phone']) || !empty($row['Op_email'])) {
                                                                 ?> 
                                                                 <div style="text-align: center">
                                                                     <button class="btn btn-xs btn-primary" data-target="#removeModal" data-toggle="modal" 
@@ -288,55 +270,51 @@ $device_array = array();
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                         <div class="row">
-                                <div class="col-lg-3">
-                                <center><label>Equipment: </label></center>
-                                </div>
-                                <div class="col-lg-9">
-                                <select class="form-control" name="d_id" id="d_id" onchange="selectDevice(this)" tabindex="1">
-                                    <option disabled hidden selected value="">Device</option>
-                                    <?php if($result = $mysqli->query("
-                                        SELECT d_id, device_desc
-                                        FROM devices
-                                        ORDER BY device_desc
-                                    ")){
-                                        while($row = $result->fetch_assoc()){
-                                            echo("<option value='".$row["d_id"]."'>".$row["device_desc"]."</option>");
-                                        }echo $d_id;
-                                    } else {
-                                        echo ("Device list Error - SQL ERROR");
-                                    }?>
-                                </select> 
-                                </div>
-                            </div>
+                                <div class="col-lg-11">
+                                <tr>
+                                <td>Device</td>
+                                <td>
+                                    <select class="form-control" name="devGrp" id="devGrp" onChange="change_group()" >
+                                        <option value="" > Select Group</option>
+                                        <?php
 
-                        <div class="row">
-                                <div class="col-lg-3">
-                                <center><label>MavID: </label></center>
-                                </div>
-                                <div class="col-lg-9">
-                                    <select class="form-control" name="Operator" id="Operator" onchange="" tabindex="1">
-                                        <option disabled hidden selected value="">MavID</option>
-                                        <?php if($result = $mysqli->query("
-                                            SELECT `Operator`, `Q_id`
-                                            FROM `wait_queue`
-                                            WHERE `valid` = 'Y'
-                                            ORDER BY `Q_id`
-                                        ")){
-                                            while($row = $result->fetch_assoc()){
-                                                echo("<option value='$row[Q_id]'>$row[Operator]</option>");
-                                            }
-                                        } else {
-                                            echo ("Device list Error - SQL ERROR");
-                                        }?>
+                                            // Load all of the device groups that are being waited for - signified with a 'DG' in front of the value attribute
+                                            if ($result = $mysqli->query("
+                                                SELECT DISTINCT `device_desc`, `dg_id`
+                                                FROM `devices` D JOIN `wait_queue` WQ on D.`dg_id` = WQ.`Devgr_id`
+                                            ")) {
+                                                while ( $rows = mysqli_fetch_array ( $result ) ) {
+                                                    echo "<option value=". "DG_" . $rows ['dg_id'] . ">" . $rows ['device_desc'] . "</option>";
+                                                }
+                                            } else die ("There was an error loading the device groups.");
+                                            
+
+                                            // Load all of the devices that are being waited for - signified with a 'D' in front of the value attribute
+                                            if ($result = $mysqli->query("
+                                                SELECT DISTINCT `device_desc`, `d_id`
+                                                FROM `devices` D JOIN `wait_queue` W ON D.`d_id` = W.`Dev_id`
+                                            ")) {
+                                                while ( $rows = mysqli_fetch_array ( $result ) ) {
+                                                    echo "<option value=". "D_" . $rows ['d_id'] . ">" . $rows ['device_desc'] . "</option>";
+                                                }
+                                            } else die ("There was an error loading the devices.");
+                                        ?> 
                                     </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Operator</td>
+                                <td>
+                                    <select class="form-control" name="deviceList" id="deviceList">
+                                        <option value =""> Select Group First</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            
                                 </div>
                             </div>
-                        
-    
                             
                             <button class="btn btn-primary" type="button" id="addBtn" onclick="newTicket()">Create Ticket</button>
-                            
-                    
 
                         </div>
                         <!-- /.panel-body -->
@@ -347,7 +325,7 @@ $device_array = array();
                   <div class="col-lg-13">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-ticket fa-fw"></i>View and Manage Quotes
+                            <i class="fa fa-ticket fa-fw"></i>Quotes
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -358,8 +336,6 @@ $device_array = array();
                                 <li><a href="#vinyl" data-toggle="tab">Vinyl</a>
                                 </li>
                                 <li><a href="#uprint" data-toggle="tab">uPrint</a>
-                                </li>
-                                <li><a href="#manage" data-toggle="tab">Manage</a>
                                 </li>
                             </ul>
 
@@ -416,42 +392,6 @@ $device_array = array();
                                             <h2 id="uPrint-output" class="font-medium text-center">
                                                 $0.00
                                             </h2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="manage">
-                                    <h4>Manage Quotes Tab</h4>
-                                    <div class="row">
-                                        <div class="col-lg-10">
-                                            <div class="form-group">
-                                                <label>PolyPrinter (Grams)</label>
-                                                <input class="form-control" type="number" min="0" max="1000" step=".05" id="inputField1" placeholder="New PolyPrinter Material Price">
-                                                <button onclick="polyPrinter()" type="button" class="btn btn-primary btn-block" id="pushMe">Update</button>
-                                                <!--<input class="form-control" placeholder="New PolyPrinter Material Price">
-                                                <a href="#" class="btn btn-primary btn-block">Update</a>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-10">
-                                            <div class="form-group">
-                                                <label>Vinyl (In)</label>
-                                                <input class="form-control" type="number" min="0" max="1000" step=".05" id="inputField2" placeholder="New Vinyl Material Price">
-                                                <button onclick="vinyl()" type="button" class="btn btn-primary btn-block" id="pushMe">Update</button>
-                                                <!--<input class="form-control" placeholder="New Vinyl Material Price">
-                                                <a href="#" class="btn btn-primary btn-block">Update</a>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-10">
-                                            <div class="form-group">
-                                                <label>uPrint (In<sup> 3</sup>)</label>
-                                                <input class="form-control" type="number" min="0" max="1000" step=".5" id="inputField3" placeholder="New uPrint Material Price">
-                                                <button onclick="uPrint()" type="button" class="btn btn-primary btn-block" id="pushMe">Update</button>
-                                                <!--<input class="form-control" placeholder="New uPrint Material Price">
-                                                <a href="#" class="btn btn-primary btn-block">Update</a>-->
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -627,6 +567,23 @@ $device_array = array();
     }
     }   
      
+    function change_group(){
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("deviceList").innerHTML = this.responseText;
+            }
+        };
+        
+        xmlhttp.open("GET","/pages/sub/getWaitQueueID.php?val="+ document.getElementById("devGrp").value, true);
+        xmlhttp.send();
+    }
      
     function polyPrinter()
     {
