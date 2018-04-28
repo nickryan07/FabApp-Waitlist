@@ -6,9 +6,10 @@
 include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/header.php');
 $device_array = array();
 
-if ($staff && $staff->getRoleID () < 7) {
-    // Not Authorized to see this Page
-    header ( 'Location: /pages/homepage.php' );
+if (!$staff || $staff->getRoleID() < 7){
+    //Not Authorized to see this Page
+    header('Location: /index.php');
+	exit();
 }
 ?>
 <html lang="en">
