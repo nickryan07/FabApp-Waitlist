@@ -471,6 +471,28 @@ class Wait_queue {
             return true;
         return false;
     }
+
+    public static function regexQ_id($q_id){
+        global $mysqli;
+
+        if (preg_match("/^\d+$/", $q_id) == 0){
+            //echo "Invalid Device Group.";
+            return false;
+        }
+
+        //Check to see if device exists
+        if ($result = $mysqli->query("
+            SELECT *
+            FROM `wait_queue`
+            WHERE `q_id` = '$q_id';
+        ")){
+            if ($result->num_rows == 1)
+                return true;
+            return "DG construct: Result not unique";
+        } else {
+            return "DG Construct: Error with table";
+        }
+    }
     
     public function setWaitId($q_id) {
         $this->q_id = $q_id;

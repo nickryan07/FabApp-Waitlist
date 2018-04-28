@@ -8,11 +8,15 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/api/gatekeeper.php');
 $time = $errorMsg = "";
 $error = false;
 
-// Check Device ID
-if (empty($_GET["d_id"])){
-    $errorMsg = "Device ID is Missing.";
+// Check if a Device Group or a Device is provided
+if (empty($_GET["d_id"]) && empty($_GET["dg_id"]))
+{
+    $errorMsg = "Device ID or Device Group ID is Missing";
     $error = true;
-} else {
+}
+
+// Check if it is a Device ID
+if (!empty($_GET["d_id"])){
     $d_id = filter_input(INPUT_GET,'d_id');
     if (!Devices::regexDID($d_id)) {
         $errorMsg = "Bad device ID";	
@@ -25,6 +29,18 @@ if (empty($_GET["d_id"])){
         $hour = $timeArry[0];
         $minutes = $timeArry[1];
         $limit = $hour + $minutes/60;
+    }
+}
+
+// Check if it is a Device Group
+if (!empty($_GET["dg_id"])) {
+    $dg_id = filter_input(INPUT_GET, 'dg_id');
+    if (!DeviceGroup::regexDgID($dg_id)) {
+        $errorMsg = "Bad Device Group ID";
+        $error = true;
+    } else {
+        $device_group = new DeviceGroup($dg_id);
+        
     }
 }
 

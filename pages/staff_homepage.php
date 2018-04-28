@@ -5,7 +5,6 @@
  */
 include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/header.php');
 $device_array = array();
-$_SESSION['type'] = "home";
 
 ?>
 <html lang="en">
@@ -62,6 +61,7 @@ $_SESSION['type'] = "home";
                                                     <th><i class="far fa-clock"></i> Time Left</th>
                                                     <th><i class="far fa-flag"></i> Alerts</th>
                                                     <th><i class="fa fa-times"></i> Remove</th>
+                                                    <th><i class="fa fa-print fa-fw"></i> Start Ticket</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -85,7 +85,8 @@ $_SESSION['type'] = "home";
                                                             <td align="center"><?php echo($counter++) ?></td>
                                                             <!-- Operator ID --> 
                                                             <td>
-                                                                <i class="fab fa-grav fa-spin fa-lg" title="<?php echo($row['Operator']) ?>"></i>
+                                                            <?php $user = Users::withID($row['Operator']);?>
+                                                                <i class="<?php echo $user->getIcon()?> fa-lg" title="<?php echo($row['Operator']) ?>"></i>
                                                                 <?php if (isset($row['Op_phone'])) { ?> <i class="fas fa-mobile"   title="<?php echo ($row['Op_phone']) ?>"></i> <?php } ?>
                                                                 <?php if (isset($row['Op_email'])) { ?> <i class="fas fa-envelope" title="<?php echo ($row['Op_email']) ?>"></i> <?php } ?>
                                                             </td>
@@ -113,6 +114,7 @@ $_SESSION['type'] = "home";
                                                                     ?> <i class="far fa-bell" align="center" title="Last Alerted @ <?php echo(date($sv['dateFormat'], strtotime($row['last_contact']))) ?>"></i> <?php
                                                                 } ?>
                                                             </td>
+
                                                             <!-- Send an Alert -->
                                                             <td> 
                                                                 <?php 
@@ -137,6 +139,17 @@ $_SESSION['type'] = "home";
                                                                     </button>
                                                                 </div>
                                                             </td>
+
+                                                            
+                                                            <!-- Start Ticket -->
+                                                            <td> 
+                                                                <div style="text-align: center">
+                                                                    <button class="btn btn-primary btn-xs" data-target="#removeModal" data-toggle="modal" 
+                                                                            onclick="startTicket(undefined, <?php echo $row["Devgr_id"] ?>, <?php echo $row["Operator"] ?>)">
+                                                                            Start
+                                                                    </button>
+                                                                </div>
+                                                            </td>
                                                         </tr>
                                                         <?php
                                                     }
@@ -154,6 +167,7 @@ $_SESSION['type'] = "home";
                                                 <th><i class="far fa-user"></i> MavID</th>
                                                 <th><i class="fa fa-th-large"></i> Device</th>
                                                 <th><i class="far fa-clock"></i> Time Left</th>
+                                                <th><i class="far fa-clock"></i> Start Ticket</th>
                                                 <th><i class="far fa-flag"></i> Alerts</th>
                                                 <th><i class="fa fa-times"></i> Remove</th>
                                             </tr>
@@ -184,6 +198,7 @@ $_SESSION['type'] = "home";
                                                         </td>
                                                         <!-- Device Name -->
                                                         <td align="center"><?php echo($row['device_desc']) ?></td>
+
                                                         <!-- Start Time, Estimated Time, Last Contact Time -->
                                                         <td>
                                                             <!-- Start Time -->
@@ -206,6 +221,18 @@ $_SESSION['type'] = "home";
                                                                 ?> <i class="far fa-bell" align="center" title="Last Alerted @ <?php echo(date($sv['dateFormat'], strtotime($row['last_contact']))) ?>"></i> <?php
                                                             } ?>
                                                         </td>
+
+                                                        <!-- Start Ticket -->
+                                                        <td> 
+                                                            <div style="text-align: center">
+                                                                <button class="btn btn-primary" data-target="#removeModal" data-toggle="modal" 
+                                                                        onclick="removeFromWaitlist(<?php echo $row["Q_id"].", ".$row["Operator"].", ".$row['device_id'].", undefined" ?>)">
+                                                                        <i class="glyphicon glyphicon-remove"></i>
+                                                                        Start
+                                                                </button>
+                                                            </div>
+                                                        </td>
+
                                                         <!-- Send an Alert -->
                                                         <td> 
                                                             <?php 
@@ -221,6 +248,7 @@ $_SESSION['type'] = "home";
                                                             }
                                                             ?>
                                                         </td>
+
                                                         <!-- Remove From Wait Queue -->
                                                         <td> 
                                                             <div style="text-align: center">
@@ -642,9 +670,22 @@ $_SESSION['type'] = "home";
      
      function sendManualMessage(q_id, message)
      {
-        var dest = "/pages/endWaitList.php?q_id=" + q_id + "&message=" + message;
-        window.location.href = dest;
-        //window.location.href = "/pages/staff_homepage.php";
+        window.location.href = "/pages/endWaitList.php?q_id=" + q_id + "&message=" + message;
+     }
+
+     function startTicket(d_id, dg_id, operator)
+     {
+         if (!operator) {
+             confirm("Please enter a valid Operator Number");
+             return;
+         }
+
+         if (d_id) {
+             window.location.href = "/pages/create.php?d_id=" + d_id + "&operator=" + operator;
+         }
+         else if (dg_id) {
+            window.location.href = "/pages/create.php?dg_id=" + dg_id + "&operator=" + operator;
+         }
      }
 
     $('#Device_Group_Table').DataTable({

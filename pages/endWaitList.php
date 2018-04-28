@@ -2,6 +2,12 @@
 
 include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/header.php');
 
+// Checks
+if (isset($_GET['q_id'])) 
+{
+
+}
+
 if (isset($_GET['q_id'])) {
 
     // If the message is set then send a message to the user with this queue ID
@@ -13,6 +19,8 @@ if (isset($_GET['q_id'])) {
     else {
         removeFromQueue($_REQUEST['q_id']);
     }
+
+    header("Location:/pages/staff_homepage.php");
 }
 
 

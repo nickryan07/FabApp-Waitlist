@@ -20,7 +20,6 @@ $_SESSION['type'] = "home";
                     <div class="col-lg-12">
                         <h1 class="page-header">Homepage</h1>
                     </div>
-                    <!-- /.col-lg-12 -->
                 </div>
                 
                 <div class="row">
@@ -90,7 +89,105 @@ $_SESSION['type'] = "home";
                                                 ?> <div class="tab-pane active in" id="all"> <?php
                                             } else {
                                                 ?> <div class="tab-pane fade" <?php echo("id=\"".$tab["dg_id"]."\"") ?> > <?php
-                                            } ?>
+                                            }
+                                        
+                                        if (!$isAllTable) {
+                                            ?> 
+                                                                                <!-- PolyPrinter Status -->
+                                    <div class="row text-center">
+                                        <div class="col-xs-4 col-sm-6">
+                                            <h3>#2</h3>
+                                            <p>Now Serving</p>
+                                        </div>
+
+                                        <!-- Estimated Remaining Time -->
+                                        <div class="col-xs-6">
+                                        <?php 
+                                        
+                                        // Returns the wait time (if any) as an overview
+                                        if ($result = $mysqli->query("
+                                            SELECT COUNT(*) AS NumFreeDevices
+                                            FROM devices
+                                            JOIN device_group ON devices.dg_id = device_group.dg_id
+                                            WHERE device_group.dg_id = 2 AND
+                                                devices.device_desc NOT IN (
+                                            
+                                                SELECT device_desc
+                                                FROM devices
+                                                JOIN transactions ON transactions.d_id = devices.device_id
+                                                JOIN device_group ON devices.dg_id = device_group.dg_id
+                                                WHERE device_group.dg_id = 2 AND
+                                                    status_id < 12
+                                            );
+                                        ")) {
+                                            // If the number of free devices is greater than zero than there should be not wait
+                                            if ($row  = $result->fetch_assoc()) {
+                                                ?> 
+                                                    <h3> No Wait </h3>
+                                                    <p>Wait Time</p>
+                                                <?php
+                                            }
+
+                                            // Since there are no open printers, find the least wait time
+                                            else {
+                                                if ($result = $mysqli->query("
+                                                SELECT device_desc, t_start, est_time
+                                                FROM devices
+                                                JOIN transactions ON transactions.d_id = devices.device_id
+                                                JOIN device_group ON devices.dg_id = device_group.dg_id
+                                                WHERE device_group.dg_id = 2 AND
+                                                    status_id < 12;
+                                                ")) {
+                                                    global $min_time;
+                                                    $row  = $result->fetch_assoc();
+                                                    if ($row["NumFreeDevices"] > 0) {
+                                                        // If the device has a start time, then find the lowest wait time
+                                                        if ($row["t_start"]) {
+                                                            if (isset($min_time)) {
+                                                                if ($min_time > $row["est_time"]) {
+                                                                    $min_time = $row["est_time"];
+                                                                }
+                                                            } else {
+                                                                $min_time = $row["est_time"];
+                                                            }
+                                                        }
+                                                    }
+
+                                                    // Display the wait time according to hours (if greater than 2) or minutes
+                                                    if (isset($min_time)) {
+                                                        sscanf($min_time, "%d:%d:%d", $hours, $minutes, $seconds);
+                                                        // Display the time as hours only
+                                                        if ($hours > 2) {
+                                                            ?> 
+                                                                <h3> <?php echo $hours ?> </h3>
+                                                                <p>Hour Wait</p>
+                                                            <?php
+                                                        }
+                                                        // Display the time as minutes
+                                                        else {
+                                                            ?> 
+                                                                <h3> <?php echo($hours * 60) + $minutes ?> </h3>
+                                                                <p>Minute Wait</p>
+                                                            <?php
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        ?>  
+                                            </div>
+                                        </div>
+                                                    
+                                                    
+                                                    
+                                                    <?php
+                                        }
+                                            
+?>
+                                        
+                                        
+                                        
+                                        
                                             <!-- Create the Table Header -->
                                             <table class="table table-striped table-bordered table-hover" <?php echo("id=\"indexTable_".$number_of_status_tables."\"") ?>>
                                             <thead>
@@ -263,13 +360,6 @@ $_SESSION['type'] = "home";
                                     </div>
                                 </div>
                             </div>
-                   
-                   
-                   
-                   
-                   
-                   
-                   
                    
                     <!-- Overview-->
                     <div class="col-lg-4">
@@ -550,8 +640,7 @@ $_SESSION['type'] = "home";
                             </div>
                         </div>
                     </div>
-                <!-- </div> -->
-                <!--<div class="row"> -->
+
                     <!-- Materials -->
                     <div class="col-lg-4">
                         <div class="panel panel-default">
@@ -613,7 +702,6 @@ $_SESSION['type'] = "home";
                         </div>
                     </div>
                 </div>
-                <!-- </div> -->
             </div>
         </div>
 </div>

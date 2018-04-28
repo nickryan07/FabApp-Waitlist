@@ -127,6 +127,21 @@ class Transactions {
             }
         }
     }
+    public function end_octopuppet($trans_id){
+        global $mysqli;
+
+        if ($mysqli->query("
+            UPDATE `transactions`
+            SET `status_id` = '11'
+            WHERE `trans_id` = '$this->trans_id';
+        ")){
+            if ($mysqli->affected_rows == 1){
+                return true;
+            } else {
+                return "Check end_octopuppet.php";
+            }
+        }
+    }
 	
     public static function insertTrans($operator, $d_id, $est_time, $p_id, $status_id, $staff) {
         global $mysqli;
