@@ -9,13 +9,15 @@ if (!empty($_GET["val"])) {
     $value = $_GET["val"];
 
     if (strpos($value, 'DG') !== false) {
-        $dg_id = str_replace("DG_","",$value);
+        sscanf($value, "DG_%d-%d", $dg_id, $d_id);
+
         echo ("dg_id = $dg_id");
+        echo ("d_id = $d_id");
 
         if ($dg_id !="" && DeviceGroup::regexDgID($dg_id)) {
             // Select all of the MAV IDs that are waiting for this device group
             $result = $mysqli->query ( "
-                SELECT `Operator`
+                SELECT DISTINCT `Operator`, `Q_id`
                 FROM `wait_queue`
                 WHERE `Devgr_id` = $dg_id AND `Valid` = 'Y'
                 ORDER BY `Q_id` ASC
@@ -38,7 +40,7 @@ if (!empty($_GET["val"])) {
 
             // Select all of the MAV IDs that are waiting for this device
             $result = $mysqli->query ( "
-                SELECT `Operator`
+                SELECT DISTINCT `Operator`, `Q_id`
                 FROM `wait_queue`
                 WHERE `Dev_id` = $d_id AND `Valid` = 'Y'
                 ORDER BY `Q_id` ASC

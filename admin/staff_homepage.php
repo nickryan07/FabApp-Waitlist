@@ -6,6 +6,10 @@
 include_once ($_SERVER['DOCUMENT_ROOT'].'/pages/header.php');
 $device_array = array();
 
+if ($staff && $staff->getRoleID () < 7) {
+    // Not Authorized to see this Page
+    header ( 'Location: /pages/homepage.php' );
+}
 ?>
 <html lang="en">
 
@@ -34,8 +38,8 @@ $device_array = array();
                     <!-- Wait Queue -->
                     <div class="col-lg-13">
                         <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <i class="fa fa-ticket fa-fw"></i>Wait Queue
+                        <div class="panel-heading">
+                                <i class="fas fa-ticket-alt fa-fw"></i>  Wait Queue
 
                                 <input type="button" class="btn btn-sm btn-primary pull-right" value="New Wait Ticket" onclick="location.href = '/admin/wait_ticket.php'">
 
@@ -44,20 +48,20 @@ $device_array = array();
                             <div class="panel-body">
                                 <div class="table-responsive">
                                     <ul class="nav nav-tabs">
-                                            <!-- Have at least the 'All' tab which will have all devices -->
-                                            <li class="">
+                                            <li class="active">
                                                 <a href="#device_group_tab" data-toggle="tab" aria-expanded="false">Device Groups</a>
                                             </li>
-                                            <li class="active">
+                                            <li class="">
                                                 <a href="#device_tab" data-toggle="tab" aria-expanded="false">Devices</a>
                                             </li>
                                     </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane fade in" id="device_group_tab">
+                                    <div class="tab-pane fade active in" id="device_group_tab">
                                         <table id="Device_Group_Table" class="table table-striped table-bordered table-hover">
                                             <thead>
                                                 <tr align="center">
                                                     <th><i class="fa fa-th-list"></i> Queue #</th>
+                                                    <th><i class="fa fa-th-list"></i> Priority</th>
                                                     <th><i class="far fa-user"></i> MavID</th>
                                                     <th><i class="fa fa-th-large"></i> Device Group</th>
                                                     <th><i class="far fa-clock"></i> Time Left</th>
@@ -83,7 +87,11 @@ $device_array = array();
                                                         ?>
                                                         <tr>
                                                             <!-- Wait Queue Number -->
+                                                            <td align="center"><?php echo($row['Q_id']) ?></td>
+
+                                                            <!-- Priority Number -->
                                                             <td align="center"><?php echo($counter++) ?></td>
+
                                                             <!-- Operator ID --> 
                                                             <td>
                                                             <?php $user = Users::withID($row['Operator']);?>
@@ -106,7 +114,7 @@ $device_array = array();
                                                                         echo("<span align=\"center\" id=\"est".$row["Q_id"]."\">"."  ".$row["estTime"]."  </span>" );
                                                                         $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $row["estTime"]);
                                                                         sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
-                                                                        $time_seconds = $hours * 3600 + $minutes * 60 + $seconds;
+                                                                        $time_seconds = $hours * 3600 + $minutes * 60 + $seconds - (time() - strtotime($row["Start_date"]) ) + $sv["grace_period"];
                                                                         array_push($device_array, array($row["Q_id"], $time_seconds, 1));
                                                                     }
                                                                 ?>
@@ -151,11 +159,12 @@ $device_array = array();
                                     </div>
 
                                     <!-- Device Wait Queue -->
-                                    <div class="tab-pane fade active in" id="device_tab">
+                                    <div class="tab-pane fade in" id="device_tab">
                                     <table id="Device_Table" class="table table-striped table-bordered table-hover">
                                         <thead>
                                             <tr>
                                                 <th><i class="fa fa-th-list"></i> Queue #</th>
+                                                <th><i class="fa fa-th-list"></i> Priority</th>
                                                 <th><i class="far fa-user"></i> MavID</th>
                                                 <th><i class="fa fa-th-large"></i> Device</th>
                                                 <th><i class="far fa-clock"></i> Time Left</th>
@@ -180,7 +189,11 @@ $device_array = array();
                                                     ?>
                                                     <tr>
                                                         <!-- Wait Queue Number -->
+                                                        <td align="center"><?php echo($row['Q_id']) ?></td>
+                                                    
+                                                        <!-- Wait Queue Number -->
                                                         <td align="center"><?php echo($counter++) ?></td>
+                                                    
                                                         <!-- Operator ID --> 
                                                         <td>
                                                             <?php $user = Users::withID($row['Operator']);?>
@@ -204,7 +217,7 @@ $device_array = array();
                                                                     echo("<span align=\"center\" id=\"est".$row["Q_id"]."\">"."  ".$row["estTime"]."  </span>" );
                                                                     $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $row["estTime"]);
                                                                     sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
-                                                                    $time_seconds = $hours * 3600 + $minutes * 60 + $seconds;
+                                                                    $time_seconds = $hours * 3600 + $minutes * 60 + $seconds - (time() - strtotime($row["Start_date"]) ) + $sv["grace_period"];
                                                                     array_push($device_array, array($row["Q_id"], $time_seconds, 1));
                                                                 }
                                                             ?>
@@ -280,11 +293,12 @@ $device_array = array();
 
                                             // Load all of the device groups that are being waited for - signified with a 'DG' in front of the value attribute
                                             if ($result = $mysqli->query("
-                                                SELECT DISTINCT `device_desc`, `dg_id`
+                                                SELECT DISTINCT `device_desc`, `dg_id`, `d_id`
                                                 FROM `devices` D JOIN `wait_queue` WQ on D.`dg_id` = WQ.`Devgr_id`
                                             ")) {
                                                 while ( $rows = mysqli_fetch_array ( $result ) ) {
-                                                    echo "<option value=". "DG_" . $rows ['dg_id'] . ">" . $rows ['device_desc'] . "</option>";
+                                                    // Create value in the form of DG_dgID-dID
+                                                    echo "<option value=". "DG_" . $rows ['dg_id'] . "-" . $rows ['d_id'].">" . $rows ['device_desc'] . "</option>";
                                                 }
                                             } else die ("There was an error loading the device groups.");
                                             
@@ -295,6 +309,7 @@ $device_array = array();
                                                 FROM `devices` D JOIN `wait_queue` W ON D.`d_id` = W.`Dev_id`
                                             ")) {
                                                 while ( $rows = mysqli_fetch_array ( $result ) ) {
+                                                    // Create value in the form of D_dID
                                                     echo "<option value=". "D_" . $rows ['d_id'] . ">" . $rows ['device_desc'] . "</option>";
                                                 }
                                             } else die ("There was an error loading the devices.");
@@ -540,33 +555,7 @@ $device_array = array();
             var answer = alert(message);
         }
     }   
-         
-    
-    function selectDevice(element){
-        if (element == "") {
-            document.getElementById("d_id").selectedIndex = 0;
-        } else { 
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {
-            // code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-            
-        device = element.id + "=" + element.value;
-            
-        /*xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("txtHint").innerHTML = this.responseText;
-            }
-        };
-        device = element.id + "=" + element.value;
-        xmlhttp.open("GET","sub/certD_ID.php?"+device,true);
-        xmlhttp.send();*/
-    }
-    }   
-     
+      
     function change_group(){
         if (window.XMLHttpRequest) {
             // code for IE7+, Firefox, Chrome, Opera, Safari
@@ -581,7 +570,7 @@ $device_array = array();
             }
         };
         
-        xmlhttp.open("GET","/pages/sub/getWaitQueueID.php?val="+ document.getElementById("devGrp").value, true);
+        xmlhttp.open("GET","/admin/sub/getWaitQueueID.php?val="+ document.getElementById("devGrp").value, true);
         xmlhttp.send();
     }
      
