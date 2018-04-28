@@ -86,7 +86,7 @@ if (!$staff || $staff->getRoleID() < 7){
                                     <div class="form-group">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" name="disclaimer" value="">I have read and understand the <a>FERPA release policies</a>.
+                                                <input type="checkbox" name="disclaimer" value="">I have read and understand the <a href="http://fablab.uta.edu/policy" target="_blank">Fablab Wait Policies</a>.
                                             </label>
                                         </div>
                                         <?php
