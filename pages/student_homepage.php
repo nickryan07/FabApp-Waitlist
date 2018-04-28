@@ -94,7 +94,7 @@ if ($errorMsg != ""){
                                         {
                                             $phone = $_POST["phone"];
                                             $email = $_POST["email"];
-                                            Transactions::insertContactInfo($operator, $phone, $email);
+                                            Wait_queue::updateContactInfo($operator, $phone, $email);
                                         }
                                     } else {
                                         echo ("You must accept the disclaimer.");

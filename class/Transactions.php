@@ -138,6 +138,7 @@ class Transactions {
         if (!Purpose::regexID($p_id)) return "Invalid Purpose";
         if (!Status::regexID($status_id)) return "Invalid Status";
         
+        // This function checks to see if a corresponding wait ticket exists, and invalidates it if so
         Wait_queue::transferFromWaitQueue($operator->getOperator(), $d_id);
         
         if ($mysqli->query("
@@ -148,35 +149,6 @@ class Transactions {
         ")){
             return $mysqli->insert_id;
         } else {
-            return $mysqli->error;
-        }
-    }
-	
-	public static function insertContactInfo($operator, $op_phone, $op_email) {
-        global $mysqli;
-
-        //Validate input variables
-		if (!self::regexPhone($op_phone)) {
-            echo ("Bad phone number");
-            echo $op_phone;
-            return "Bad phone number";
-        }
-		
-		if(!filter_var($op_email, FILTER_VALIDATE_EMAIL)) {
-            echo ("Bad email");
-			return "Bad email";
-		}
-        
-        if ($mysqli->query("
-            UPDATE `transactions`
-			SET `op_phone` = '$op_phone', `op_email` = '$op_email'
-			WHERE `transactions`.`operator` = '$operator'
-        ")){
-            
-            echo ("\nSuccessfully updated contact info!");
-            return $mysqli->insert_id;
-        } else {
-            echo ("Error updating contact info!");
             return $mysqli->error;
         }
     }

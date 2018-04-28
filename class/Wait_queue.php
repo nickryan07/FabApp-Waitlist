@@ -527,15 +527,61 @@ class Wait_queue {
 		if(!filter_var($op_email, FILTER_VALIDATE_EMAIL)) {
             echo ("Bad email");
 			return "Bad email";
-		}
-        /**
-         * TODO: Use IF EXISTS and to update if an operator already exists in the table
-         */
+        }
+        
         if ($mysqli->query("
-            INSERT INTO operator_info
-                (`Op_id`, `Op_email`, `Op_phone`, `last_contact`)
-            VALUES
-                ('$operator', '$op_email', '$op_phone', CURRENT_TIMESTAMP);
+        INSERT INTO operator_info
+            (`Op_id`, `Op_email`, `Op_phone`, `last_contact`)
+        VALUES
+        ('$operator', '$op_email', '$op_phone', CURRENT_TIMESTAMP)
+        ON DUPLICATE KEY UPDATE `Op_email` = '$op_email', `Op_phone` = '$op_phone';
+        ")){
+            
+            echo ("\nSuccessfully updated contact info!");
+            return $mysqli->insert_id;
+        } else {
+            echo ("Error updating contact info!");
+            return $mysqli->error;
+        }
+    }
+
+    public static function updateContactInfo($operator, $op_phone, $op_email) {
+        global $mysqli;
+
+        /* Check if user has any valid wait tickets */
+        if ($result = $mysqli->query("
+            SELECT *
+            FROM `wait_queue`
+            WHERE `Operator` = '$operator' AND `valid` = 'Y'
+            LIMIT 1;
+        ")){
+            if($result->num_rows == 0) {
+                echo ("You do not have any wait tickets");
+                return;
+            }
+        } else {
+            echo ("Error updating contact info!");
+            return $mysqli->error;
+        }
+
+        //Validate input variables
+		if (!self::regexPhone($op_phone)) {
+            echo ("Bad phone number - ");
+            echo $op_phone;
+            return "Bad phone number";
+        }
+		
+		if(!filter_var($op_email, FILTER_VALIDATE_EMAIL)) {
+            echo ("Bad email");
+			return "Bad email";
+        }
+        
+        if ($mysqli->query("
+        INSERT INTO operator_info
+            (`Op_id`, `Op_email`, `Op_phone`, `last_contact`)
+        VALUES
+        ('$operator', '$op_email', '$op_phone', CURRENT_TIMESTAMP)
+        ON DUPLICATE KEY UPDATE `Op_email` = '$op_email', `Op_phone` = '$op_phone';
         ")){
             
             echo ("\nSuccessfully updated contact info!");
