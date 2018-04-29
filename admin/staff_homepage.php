@@ -337,88 +337,157 @@ if (!$staff || $staff->getRoleID() < 7){
                         </div>
                     </div>
                     <!-- /.panel -->
-                  <div class="col-lg-13">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-ticket fa-fw"></i>Quotes
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs">
-                                <li class="active"><a href="#polyprinter" data-toggle="tab">PolyPrinter</a>
-                                </li>
-                                <li><a href="#vinyl" data-toggle="tab">Vinyl</a>
-                                </li>
-                                <li><a href="#uprint" data-toggle="tab">uPrint</a>
-                                </li>
-                            </ul>
+                    <!-- Quotes -->
+                    <div class="col-lg-13">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <label><i class="fa fa-ticket fa-tag"></i>  Quotes</label>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs">
+                                    <li class="active">
+                                        <a href="#polyprinter" data-toggle="tab">PolyPrinter</a>
+                                    </li>
+                                    <li>
+                                        <a href="#vinyl" data-toggle="tab">Vinyl</a>
+                                    </li>
+                                    <li>
+                                        <a href="#uprint" data-toggle="tab">uPrint</a>
+                                    </li>
+                                </ul>
 
-                            <!-- Tab panes -->
-                            <div class="tab-content">
-                                <div class="tab-pane fade in active" id="polyprinter">
-                                    <h4>PolyPrinter Quote Tab</h4>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <input id="polyprinter-input" class="form-control" onkeyup="polyPrinter()" onchange="polyPrinter()" type="number" min="0" max="1000" step=".5" autocomplete="off" placeholder="Enter PolyPrinter Material">
-                                                <label for="form1" class="">Grams</label>
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <div class="tab-pane fade in active" id="polyprinter">
+                                        <h4>PolyPrinter Quote</h4>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <input id="polyprinter-input" class="form-control" onkeyup="polyPrinter()" onchange="polyPrinter()" type="number" min="0"
+                                                        max="1000" step=".5" autocomplete="off" placeholder="Amount">
+                                                    <label for="form1" class="">Grams</label>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <h2 id="polyprinter-output" class="font-medium text-center">
-                                                $0.00
-                                            </h2>
+                                            <div class="col-lg-5">
+                                                <h2 id="polyprinter-output" class="font-medium text-center">
+                                                    $0.00
+                                                </h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="tab-pane fade" id="vinyl">
-                                    <h4>Vinyl Quote Tab</h4>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <input id="vinyl-input" class="form-control" onkeyup="vinyl()" onchange="vinyl()" type="number" min="0" max="1000" step=".5" autocomplete="off" placeholder="Enter Vinyl Material">
-                                                <label for="form1" class="">Inches</label>
+                                    <div class="tab-pane fade" id="vinyl">
+                                        <h4>Vinyl Quote</h4>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <input id="vinyl-input" class="form-control" onkeyup="vinyl()" onchange="vinyl()" type="number" min="0" max="1000" step=".5"
+                                                        autocomplete="off" placeholder="Amount">
+                                                    <label for="form1" class="">Inches</label>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <h2 id="vinyl-output" class="font-medium text-center">
-                                                $0.00
-                                            </h2>
+                                            <div class="col-lg-5">
+                                                <h2 id="vinyl-output" class="font-medium text-center">
+                                                    $0.00
+                                                </h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="tab-pane fade" id="uprint">
-                                    <h4>uPrint Quote Tab</h4>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <input id="uPrint-material-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000" step=".5" autocomplete="off" placeholder="Enter Model Material">
-                                                <label for="form1" class="">Model in<sup> 3</sup></label>
+                                    <div class="tab-pane fade" id="uprint">
+                                        <h4>uPrint Quote</h4>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <input id="uPrint-material-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000"
+                                                        step=".5" autocomplete="off" placeholder="Amount">
+                                                    <label for="form1" class="">Model in
+                                                        <sup> 3</sup>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-13">
+                                                    <div class="form-group">
+                                                        <input id="uPrint-support-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000"
+                                                            step=".5" autocomplete="off" placeholder="Amount">
+                                                        <label for="form1" class="">Support in
+                                                            <sup> 3</sup>
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        <div class="col-lg-13">
-                                            <div class="form-group">
-                                                <input id="uPrint-support-input" class="form-control" onkeyup="uPrint()" onchange="uPrint()" type="number" min="0" max="1000" step=".5" autocomplete="off" placeholder="Enter Support Material">
-                                                <label for="form1" class="">Support in<sup> 3</sup></label>
+                                            <div class="col-lg-5">
+                                                <h2 id="uPrint-output" class="font-medium text-center">
+                                                    $0.00
+                                                </h2>
                                             </div>
-                                        </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <h2 id="uPrint-output" class="font-medium text-center">
-                                                $0.00
-                                            </h2>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- /.panel-body -->
-                        <div class="panel-footer">
+                    </div>
+                  <!-- /.col-lg-13 -->
+                    
+                <!-- Materials -->
+                <div class="col-lg-13">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <label>
+                                <i class="fa fa-suitcase"></i> Inventory </label>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th><i class="fas fa-paint-brush fa-fw"></i></th>
+                                        <?php if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
+                                    ?>
+                                                <th>Qty on Hand</th>
+                                        <?php
+                                } ?>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php //Display Inventory Based on device group
+                                if ($result = $mysqli->query("
+                                    SELECT `m_name`, SUM(unit_used) as `sum`, `color_hex`, `unit`
+                                    FROM `materials`
+                                    LEFT JOIN `mats_used`
+                                    ON mats_used.m_id = `materials`.`m_id`
+                                    WHERE `m_parent` = 1
+                                    GROUP BY `m_name`, `color_hex`, `unit`
+                                    ORDER BY `m_name` ASC;
+                                ")) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $row['m_name']; ?></td>
+                                                <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
+                                                <td><?php echo number_format($row['sum'])." ".$row['unit']; ?></td>
+                                            </tr>
+                                        <?php
+                                        } else {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $row['m_name']; ?></td>
+                                                <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
+                                            </tr>
+                                        <?php
+                                        }
+                                    }
+                                } else {
+                                    ?>
+                                    <tr><td colspan="3">None</td></tr>
+                                <?php
+                                } ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <!-- /.panel -->
-                  </div>
-                  <!-- /.col-lg-13 -->
+                </div>
+                <!-- /.col-lg-13 --> 
 
                 </div>
 
@@ -662,66 +731,6 @@ if (!$staff || $staff->getRoleID() < 7){
                     </div>
                 </div>
 
-                <!-- Materials -->
-                <div class="col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <label>
-                                <i class="fa fa-suitcase"></i> Inventory </label>
-                        </div>
-                        <div class="panel-body">
-                            <table class="table table-condensed">
-                                <thead>
-                                    <tr>
-                                        <th>Material</th>
-                                        <th><i class="fas fa-paint-brush fa-fw"></i></th>
-                                        <?php if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
-                                    ?>
-                                                <th>Qty on Hand</th>
-                                        <?php
-                                } ?>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <?php //Display Inventory Based on device group
-                                if ($result = $mysqli->query("
-                                    SELECT `m_name`, SUM(unit_used) as `sum`, `color_hex`, `unit`
-                                    FROM `materials`
-                                    LEFT JOIN `mats_used`
-                                    ON mats_used.m_id = `materials`.`m_id`
-                                    WHERE `m_parent` = 1
-                                    GROUP BY `m_name`, `color_hex`, `unit`
-                                    ORDER BY `m_name` ASC;
-                                ")) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        if ($staff && $staff->getRoleID() >= $sv['LvlOfStaff']) {
-                                            ?>
-                                            <tr>
-                                                <td><?php echo $row['m_name']; ?></td>
-                                                <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
-                                                <td><?php echo number_format($row['sum'])." ".$row['unit']; ?></td>
-                                            </tr>
-                                        <?php
-                                        } else {
-                                            ?>
-                                            <tr>
-                                                <td><?php echo $row['m_name']; ?></td>
-                                                <td><div class="color-box" style="background-color: #<?php echo $row['color_hex']; ?>;"/></td>
-                                            </tr>
-                                        <?php
-                                        }
-                                    }
-                                } else {
-                                    ?>
-                                    <tr><td colspan="3">None</td></tr>
-                                <?php
-                                } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
             </div>
             <!-- /.container-fluid -->
         </div>
@@ -792,39 +801,28 @@ if (!$staff || $staff->getRoleID() < 7){
         xmlhttp.send();
     }
      
-    function polyPrinter()
-    {
-        var a = 0.05;
-        a = document.getElementById("inputField1").value || a;
-        var rate = a;
-        var volume = document.getElementById("polyprinter-input").value;
-        var total = (volume * rate).toFixed(2);
-        document.getElementById("polyprinter-output").innerHTML = "$ " + total;
-    }
-     
+        function polyPrinter() {
+            var rate = 0.05;
+            var volume = document.getElementById("polyprinter-input").value;
+            var total = (volume * rate).toFixed(2);
+            document.getElementById("polyprinter-output").innerHTML = "$ " + total;
+        }
 
-    function vinyl()
-    {
-        var b = 0.05; 
-        b = document.getElementById("inputField2").value || b;
-        var rate = b;
-        var length = document.getElementById("vinyl-input").value;
-        var total = (rate * length).toFixed(2);
-        document.getElementById("vinyl-output").innerHTML = "$" + total;
-    }
-     
-    function uPrint()
-    {
-        var c = 0.5;
-        c = document.getElementById("inputField3").value || c;
-        var conv_rate = 16.387
-        var rate1 = c;
-        var rate2 = c;
-        var volume1 = document.getElementById("uPrint-material-input").value;
-        var volume2 = document.getElementById("uPrint-support-input").value;
-        var total = ((volume1 * conv_rate * rate1) + (volume2 * conv_rate * rate2)).toFixed(2);
-        document.getElementById("uPrint-output").innerHTML = "$" + total;
-    }
+        function vinyl() {
+            var rate = 0.05;
+            var length = document.getElementById("vinyl-input").value;
+            var total = (rate * length).toFixed(2);
+            document.getElementById("vinyl-output").innerHTML = "$" + total;
+        }
+        function uPrint() {
+            var conv_rate = 16.387
+            var rate1 = 0.5;
+            var rate2 = 0.5;
+            var volume1 = document.getElementById("uPrint-material-input").value;
+            var volume2 = document.getElementById("uPrint-support-input").value;
+            var total = ((volume1 * conv_rate * rate1) + (volume2 * conv_rate * rate2)).toFixed(2);
+            document.getElementById("uPrint-output").innerHTML = "$" + total;
+        }
      
     function changeTheVariable() 
      {
