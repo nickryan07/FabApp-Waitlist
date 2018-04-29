@@ -320,7 +320,7 @@ if (!$staff || $staff->getRoleID() < 7){
                             <tr>
                                 <td>Operator</td>
                                 <td>
-                                    <select class="form-control" name="deviceList" id="deviceList" onChange="change_group()">
+                                    <select class="form-control" name="deviceList" id="deviceList">
                                         <option value =""> Select Group First</option>
                                     </select>
                                 </td>
@@ -748,6 +748,21 @@ if (!$staff || $staff->getRoleID() < 7){
     var device = "";
      
     function newTicket(){
+        var device_id = document.getElementById("devGrp").value;
+        var o_id = document.getElementById("deviceList").value;
+        
+        if("D_" === device_id.substring(0,2)){
+            device_id = device_id.substring(2);
+        } else{
+            if("-" === device_id.substring(4,5)){
+            device_id = device_id.substring(5);
+            } else{
+            device_id = device_id.substring(6);
+            }
+        }
+        
+        device = "d_id=" + device_id + "&operator=" + o_id;
+
         if (device  != ""){
             var dest = "/pages/create.php?";
             dest = dest.concat(device);
@@ -775,22 +790,6 @@ if (!$staff || $staff->getRoleID() < 7){
         
         xmlhttp.open("GET","/admin/sub/getWaitQueueID.php?val="+ document.getElementById("devGrp").value, true);
         xmlhttp.send();
-        
-        
-        var device_id = document.getElementById("devGrp").value;
-        var o_id = document.getElementById("deviceList").value;
-        
-        if("D_" === device_id.substring(0,2)){
-            device_id = device_id.substring(2);
-        } else{
-            if("-" === device_id.substring(4,5)){
-            device_id = device_id.substring(5);
-            } else{
-            device_id = device_id.substring(6);
-            }
-        }
-        
-        device = "d_id=" + device_id + "&operator=" + o_id;
     }
      
     function polyPrinter()

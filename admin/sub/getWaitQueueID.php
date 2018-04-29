@@ -17,10 +17,14 @@ if (!empty($_GET["val"])) {
         if ($dg_id !="" && DeviceGroup::regexDgID($dg_id)) {
             // Select all of the MAV IDs that are waiting for this device group
             $result = $mysqli->query ( "
-                SELECT DISTINCT `Operator`, `Q_id`
-                FROM `wait_queue`
-                WHERE `Devgr_id` = $dg_id AND `Valid` = 'Y'
-                ORDER BY `Q_id` ASC
+                SELECT DISTINCT `Operator`
+                FROM (                 
+                    SELECT `Operator`, `Q_id`
+                    FROM `wait_queue`
+                    WHERE `Devgr_id` = $dg_id AND `Valid` = 'Y'
+                    ORDER BY `Q_id` ASC
+                ) AS A
+                ORDER BY `Q_id`
             " );
 	
             echo "<select>";
@@ -40,10 +44,14 @@ if (!empty($_GET["val"])) {
 
             // Select all of the MAV IDs that are waiting for this device
             $result = $mysqli->query ( "
-                SELECT DISTINCT `Operator`, `Q_id`
-                FROM `wait_queue`
-                WHERE `Dev_id` = $d_id AND `Valid` = 'Y'
-                ORDER BY `Q_id` ASC
+                SELECT DISTINCT `Operator`
+                FROM (                 
+                    SELECT `Operator`, `Q_id`
+                    FROM `wait_queue`
+                    WHERE `Devgr_id` = $d_id AND `Valid` = 'Y'
+                    ORDER BY `Q_id` ASC
+                ) AS A
+                ORDER BY `Q_id`
             " );
 	
             echo "<select>";
