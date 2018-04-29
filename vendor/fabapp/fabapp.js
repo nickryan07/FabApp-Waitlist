@@ -27,6 +27,19 @@ function removeFromWaitlist(queueNum, operator, device_id, device_group_id) {
     }
 }
 
+function cancelWaitTicket(queueNum, operator, device_id, device_group_id) {
+    var message = "Are you sure you wish to cancel your wait ticket?";
+    var answer = confirm(message);
+    if (answer){
+        var dest = "/pages/endWaitList.php?q_id=";
+        dest = dest.concat(queueNum);
+        dest = dest.concat("&operator=");
+        dest = dest.concat(operator);
+        
+        window.location.href = dest;
+    }
+}
+
 //fire off modal & optional dismissal timer
 function goModal(title, body, auto){
     document.getElementById("modal-title").innerHTML = title;

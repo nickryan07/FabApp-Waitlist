@@ -19,8 +19,11 @@ if (isset($_GET['q_id'])) {
     else {
         removeFromQueue($_REQUEST['q_id']);
     }
-
-    header("Location:/pages/staff_homepage.php");
+    if(isset($_GET['operator'])) {
+        header("Location:/pages/student_homepage.php?operator=" . $_GET['operator']);
+    } else {
+        header("Location:/admin/staff_homepage.php");
+    }
 }
 
 

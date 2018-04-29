@@ -185,7 +185,7 @@ if ($errorMsg != ""){
                         } ?>
                         <!-- ####### Wait Tickets ####### -->
                         <?php if ($result = $mysqli->query("
-                            SELECT Q_id, estTime, Start_date, Dev_id, Devgr_id
+                            SELECT Q_id, Operator, estTime, Start_date, Dev_id, Devgr_id
                             FROM wait_queue
                             WHERE `Operator` = '$operator' AND `valid` = 'Y' AND `Devgr_id` IS NULL;
                         ")){
@@ -201,14 +201,18 @@ if ($errorMsg != ""){
                             </div>
                             <div class="panel-body">
                                 <div class="col-lg-4">
-                                    <div id="job-info" style="margin-left: 25px;">
-                                        <h6>
-                                            Number
-                                        </h6>
-                                        <h3>
-                                            #
-                                            <?php echo ("$panel[Q_id]"); ?>
-                                        </h3>
+                                    <div id="job-info">
+                                        <div id="wait-info" style="margin-left: 15px;">
+                                            <h6>
+                                                Number
+                                            </h6>
+                                            <h4>
+                                                #
+                                                <?php echo ("$panel[Q_id]"); ?>
+                                            </h4>
+                                        </div>
+                                        <button class="btn btn-danger" data-target="#removeModal" data-toggle="modal" 
+                                            onclick="cancelWaitTicket(<?php echo $panel["Q_id"].", ".$panel["Operator"].", ".$panel["Dev_id"].", undefined"?>)">Cancel</button>
                                     </div>
                                 </div>
                                 <div class="col-lg-8">
@@ -256,7 +260,7 @@ if ($errorMsg != ""){
 
 
                         <?php if ($result = $mysqli->query("
-                            SELECT Q_id, estTime, Start_date, Dev_id, Devgr_id
+                            SELECT Q_id, Operator, estTime, Start_date, Dev_id, Devgr_id
                             FROM wait_queue
                             WHERE `Operator` = '$operator' AND `valid` = 'Y' AND `Dev_id` IS NULL;
                         ")){
@@ -269,17 +273,22 @@ if ($errorMsg != ""){
                                 <i class="fas fa-ticket-alt fa-spin fa-fw"></i>
                                 <span class="sr-only">Loading...</span> Wait Ticket -
                                 <?php echo $deviceGroup->getDg_desc(); ?>
+                                
                             </div>
                             <div class="panel-body">
                                 <div class="col-lg-4">
-                                    <div id="job-info" style="margin-left: 25px;">
-                                        <h6>
-                                            Number
-                                        </h6>
-                                        <h3>
-                                            #
-                                            <?php echo ("$panel[Q_id]"); ?>
-                                        </h3>
+                                    <div id="job-info">
+                                        <div id="wait-info" style="margin-left: 15px;">
+                                            <h6>
+                                                Number
+                                            </h6>
+                                            <h4>
+                                                #
+                                                <?php echo ("$panel[Q_id]"); ?>
+                                            </h4>
+                                        </div>
+                                        <button class="btn btn-danger" data-target="#removeModal" data-toggle="modal" 
+                                            onclick="cancelWaitTicket(<?php echo $panel["Q_id"].", ".$panel["Operator"].", undefined, ".$panel["Devgr_id"]; ?>)">Cancel</button>
                                     </div>
                                 </div>
                                 <div class="col-lg-8">
