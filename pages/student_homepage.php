@@ -223,7 +223,7 @@ if ($errorMsg != ""){
                                                         <?php //echo("<div>".date( 'M d g:i a',strtotime($panel["Start_date"]) )."</div>" );
                                                             if (isset($panel["estTime"])) {
                                                                 echo("<div id=\"est".$panel["Q_id"]."\">".$panel["estTime"]." </div>" );
-                                                                $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $panel["est_time"]);
+                                                                $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $panel["estTime"]);
                                                                 sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
                                                                 $time_seconds = $hours * 3600 + $minutes * 60 + $seconds- (time() - strtotime($panel["Start_date"]) ) + $sv["grace_period"];
                                                                 array_push($job_array, array($panel["Q_id"], $time_seconds, $device->getDg()));
